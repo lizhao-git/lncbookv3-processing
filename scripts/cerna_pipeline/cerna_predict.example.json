@@ -1,0 +1,11 @@
+{
+  "genome_fa": "Ref/Genome/hg38.fa",
+  "gtf": "Ref/GTF/LncBook_v3_hg38.lncRNAs_attr_normalized.gtf",
+  "mature_mirna_fa": "Ref/miRBase/mature.fa",
+  "miranda_bin": "miranda",
+  "rnahybrid_bin": "RNAhybrid",
+  "miranda_score": 140.0,
+  "miranda_energy": -10.0,
+  "rnahybrid_pvalue": 0.05,
+  "rnahybrid_model": "3utr_human"
+}

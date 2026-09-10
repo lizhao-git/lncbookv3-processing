@@ -1,0 +1,10 @@
+{
+  "miranda": "ceRNA/miRanda/out/miRanda_interaction_out_select_v2.txt",
+  "targetscan": "ceRNA/TargetScan/out/TargetScan_combine_v2.txt",
+  "rnahybrid": "ceRNA/RNAhybrid/out/RNAhybrid_split",
+  "transcript_id_alias": "Ref/GTF/transcript_id_alias.txt",
+  "hgnc_symbol_transcript": "ceRNA/experiment/HGNC_symbol_transcript.txt",
+  "transcript_gene": "Ref/GTF/transcript_gene.txt",
+  "lncrnawiki": "ceRNA/experiment/LncRNAWiki2.0-ceRNA.txt",
+  "hmdd": "ceRNA/HMDD/alldata_v2.txt"
+}
