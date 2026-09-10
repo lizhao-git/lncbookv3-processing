@@ -1,0 +1,49 @@
+{
+  "gene_info": "Ref/GTF/gene_info.txt",
+  "promoter_info": "Ref/GTF/gene_promoter_info.txt",
+  "gene_list": "Ref/GTF/general_gene_list.txt",
+  "datasets": [
+    {
+      "name": "GSE109875",
+      "disease": "Autism",
+      "category": "brain",
+      "format": "bismark",
+      "input_dir": "Datasets/Downloads/GSE109875/data",
+      "chain": null,
+      "class_regex": {"case": "autism|ASD|case", "control": "control|normal"},
+      "method": "wilcox",
+      "case_label": "case",
+      "control_label": "control",
+      "pval": 0.02,
+      "min_median": 0.2
+    },
+    {
+      "name": "GSE116229",
+      "disease": "ALL",
+      "category": "cancer",
+      "format": "bigwig",
+      "input_dir": "Datasets/Downloads/GSE116229/bigwig",
+      "chain": "Ref/liftover/hg19ToHg38.over.chain.gz",
+      "class_regex": {"case": "leukemia|tumor", "control": "normal|control"},
+      "method": "wilcox",
+      "case_label": "case",
+      "control_label": "control",
+      "pval": 0.02,
+      "min_median": 0.2
+    },
+    {
+      "name": "GSE79799",
+      "disease": "liver cancer",
+      "category": "cancer",
+      "format": "bigwig",
+      "input_dir": "Datasets/Downloads/GSE79799/bigwig",
+      "chain": "Ref/liftover/hg19ToHg38.over.chain.gz",
+      "class_regex": {"case": "tumor|cancer", "control": "normal"},
+      "method": "foldchange",
+      "case_label": "case",
+      "control_label": "control",
+      "fc": 4.0,
+      "min_abs": 0.2
+    }
+  ]
+}
