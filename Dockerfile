@@ -1,0 +1,66 @@
+# lncbookv3-processing runtime image
+# Single image that provides Python 3.11 (for the validation/filter/format
+# scripts), bedtools (for interval intersections), BEDOPS (wig2bed, used by
+# the methylation preprocess stage for bigwig inputs), samtools (SAM/BAM
+# conversion) and the UCSC kent tools (bigWig/bigBed conversion, liftover).
+FROM python:3.11.9-slim
+
+# bedtools for `bedtools intersect -wa -wb`; bedops for `wig2bed`; samtools
+# for the SAM/BAM scripts. UCSC kent tools are installed below.
+# gcc/make/autotools/libgd build the ceRNA target-prediction tools (miRanda,
+# RNAhybrid).
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        bedtools bedops samtools \
+        gcc make autoconf automake libtool flex bison \
+        wget ca-certificates libgd-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# UCSC kent tools: bigWig/bigBed conversion for the format_convert track
+# scripts and the bigwig/bigbed/liftover methylation paths. amd64 builds
+# come from the current linux.x86_64 directory, arm64 from the pinned
+# linux.aarch64.v492 snapshot (TARGETARCH is set by BuildKit; the fallback
+# keeps legacy x86_64 builds working).
+ARG TARGETARCH
+RUN case "${TARGETARCH:-amd64}" in \
+        arm64) base="https://hgdownload.soe.ucsc.edu/admin/exe/linux.aarch64.v492" ;; \
+        *) base="https://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64" ;; \
+    esac \
+    && for tool in bedToBigBed bedGraphToBigWig bigBedToBed bigWigToBedGraph bigWigToWig liftOver; do \
+        wget -q "${base}/${tool}" -O "/usr/local/bin/${tool}" \
+        && chmod +x "/usr/local/bin/${tool}"; \
+    done
+
+# miRanda (microRNA target prediction). If the MSKCC mirror is unavailable,
+# obtain miRanda-aug2010.tar.gz from an alternative mirror and place it at
+# /tmp/miranda.tar.gz before building.
+RUN wget -q http://cbio.mskcc.org/microrna_data/miRanda-aug2010.tar.gz \
+        -O /tmp/miranda.tar.gz \
+    && tar -xzf /tmp/miranda.tar.gz -C /opt \
+    && cd /opt/miRanda-3.3a \
+    && ./configure --prefix=/usr/local \
+    && make \
+    && make install \
+    && rm -f /tmp/miranda.tar.gz
+
+# RNAhybrid (minimum free energy RNA-RNA hybridisation).
+RUN wget -q https://bibiserv.cebitec.uni-bielefeld.de/applications/rnahybrid/resources/downloads/RNAhybrid-2.1.2.tar.gz \
+        -O /tmp/rnahybrid.tar.gz \
+    && echo "e2bbbca714441f709732412a1a130e4911e212419af5b09154ddfaf0148d6e96  /tmp/rnahybrid.tar.gz" | sha256sum -c - \
+    && tar -xzf /tmp/rnahybrid.tar.gz -C /opt \
+    && cd /opt/RNAhybrid-2.1.2 \
+    && make \
+    && test -x RNAhybrid \
+    && cp RNAhybrid /usr/local/bin/ \
+    && for b in RNAcalibrate RNAeffective; do cp "$b" /usr/local/bin/ 2>/dev/null || true; done \
+    && rm -f /tmp/rnahybrid.tar.gz
+
+# Bake the pipeline scripts into the image so the CWL tools can reference a
+# stable, absolute path inside the container.
+WORKDIR /opt/lncbookv3
+COPY scripts/ /opt/lncbookv3/scripts/
+
+# cwltool/container engines override CMD; keep an empty ENTRYPOINT so the
+# command passed by the workflow runner is executed directly.
+ENTRYPOINT []
+CMD ["/bin/bash"]
