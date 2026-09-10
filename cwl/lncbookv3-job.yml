@@ -1,0 +1,39 @@
+# Example CWL job for lncbookv3-processing.
+# Run from the repository root (relative paths below resolve against the CWD):
+#   cwltool --outdir results/cwl cwl/lncbookv3.cwl cwl/lncbookv3-job.yml
+
+gtf:
+  class: File
+  path: data/LncBook_v3_hg38.lncRNAs_attr_normalized.gtf
+
+run_clinvar: true
+clinvar_vcf:
+  class: File
+  path: data/variants/clinvar/clinvar_20260503.vcf.gz
+
+run_cosmic: false
+cosmic_tsv: null
+
+run_gwas_catalog: true
+gwas_tsv:
+  class: File
+  path: data/variants/gwas_catalog/gwas-catalog-download-associations-alt-full.tsv
+
+run_smprot: true
+smprot_tsv:
+  - class: File
+    path: data/smprot/SmProt2_highConfidenceSet.txt.gz
+
+run_methylation: false
+methylation_manifest: null
+# When enabled, methylation_manifest is a JSON manifest (see
+# scripts/methylation/methylation.example.json) and methylation_data_root is the
+# Directory anchoring its relative paths:
+methylation_data_root: null
+
+run_cerna: false
+cerna_manifest: null
+# When enabled, cerna_manifest is a JSON manifest (see
+# scripts/cerna_pipeline/cerna.example.json) and cerna_data_root is the Directory
+# anchoring its relative paths:
+cerna_data_root: null

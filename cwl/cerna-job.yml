@@ -1,0 +1,16 @@
+# Example job for the refactored ceRNA branch.
+# Build the runtime image first:
+#   docker build -t lncbookv3-processing:latest .
+#
+# Then run standalone:
+#   cwltool --outdir results/cwl/cerna \
+#     cwl/workflows/cerna.cwl \
+#     cwl/cerna-job.yml
+
+manifest:
+  class: File
+  path: scripts/cerna_pipeline/cerna.example.json
+
+data_root:
+  class: Directory
+  path: /path/to/data
