@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+
+results/
+
+runs/
+
+# input data (large reference and variant files, kept out of version control)
+data/
+
+# local CWL validation environment
+.cwl-venv/

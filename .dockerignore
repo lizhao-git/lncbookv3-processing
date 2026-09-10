@@ -1,0 +1,8 @@
+# Only executable code is baked into the image; keep the build context small.
+data/
+results/
+cwl/
+.cwl-venv/
+*.zip
+*.tar
+*.gz
