@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ceRNA pipeline orchestrator (CWL/Docker entry point).
+"""ceRNA pipeline orchestrator (Nextflow/Docker entry point).
 
 Reads a single JSON manifest and drives the refactored ceRNA stages:
 
@@ -18,7 +18,7 @@ Manifest schema::
       "hmdd":                  "path/alldata_v2.txt"
     }
 
-All manifest paths are resolved against ``--data-root`` (a CWL Directory mount)
+All manifest paths are resolved against ``--data-root`` (a workflow data-root mount)
 when relative; absolute paths are used as-is.
 """
 

@@ -1,8 +1,8 @@
-# Only executable code is baked into the image; keep the build context small.
+# Keep the optional tool-image build context small.
 data/
 results/
-cwl/
-.cwl-venv/
+work/
+.nextflow/
 *.zip
 *.tar
 *.gz

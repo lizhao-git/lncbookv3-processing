@@ -1,0 +1,1 @@
+chr1	tx1	+	lncRNA	Tx1	1	gene1	Gene1	lncRNA	intergenic	known

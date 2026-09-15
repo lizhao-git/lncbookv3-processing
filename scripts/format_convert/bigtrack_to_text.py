@@ -3,8 +3,8 @@
 
 The input format is detected from the file extension: ``.bigBed``/``.bb``
 use ``bigBedToBed`` and ``.bigWig``/``.bw`` use ``bigWigToBedGraph``.
-Requires the UCSC kent tools, which are installed in the
-lncbookv3-processing Docker image.
+Requires the UCSC kent tools (provided by the ``lncbookv3-kent`` Docker
+image).
 """
 import argparse
 import os

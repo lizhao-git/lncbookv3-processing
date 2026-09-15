@@ -4,8 +4,7 @@
 The BED type (``bedN``) is inferred from the (uniform) column count of the
 data rows unless ``--bed-type`` is given. Rows are sorted into the order
 declared by ``--chrom-sizes`` and converted with ``bedToBigBed``. Requires
-the UCSC kent tools, which are installed in the lncbookv3-processing
-Docker image.
+the UCSC kent tools (provided by the ``lncbookv3-kent`` Docker image).
 """
 import argparse
 import os

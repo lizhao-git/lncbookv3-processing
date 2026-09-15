@@ -1,0 +1,18 @@
+name: vcf2bed
+description: Convert VCF to BED with BEDOPS vcf2bed.
+keywords:
+  - lncbookv3
+  - local
+tools:
+  - vcf2bed:
+      description: Local lncbookv3-processing module wrapping project scripts or command line tools.
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+output:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

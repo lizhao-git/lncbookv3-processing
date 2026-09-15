@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ceRNA target-prediction orchestrator (CWL/Docker entry point).
+"""ceRNA target-prediction orchestrator (Nextflow/Docker entry point).
 
 Reads a single JSON manifest and drives the upstream prediction stage:
 
@@ -23,7 +23,7 @@ Manifest schema::
       "rnahybrid_model":   "3utr_human"
     }
 
-Relative manifest paths are resolved against ``--data-root`` (a CWL
+Relative manifest paths are resolved against ``--data-root`` (a workflow
 Directory mount); absolute paths are used as-is.
 """
 

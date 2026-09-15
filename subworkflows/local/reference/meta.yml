@@ -1,0 +1,9 @@
+name: reference
+description: lncbookv3-processing reference subworkflow.
+keywords:
+  - lncbookv3
+  - subworkflow
+components:
+  - modules/local
+authors:
+  - lncbookv3-processing

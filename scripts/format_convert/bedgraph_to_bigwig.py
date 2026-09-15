@@ -4,8 +4,8 @@
 Rows are sorted into the chromosome order declared by ``--chrom-sizes``
 (``track``/``browser``/``#`` lines are dropped) and converted with
 ``bedGraphToBigWig``. Use ``--clip`` to clamp values that marginally
-overrun the reference bounds. Requires the UCSC kent tools, which are
-installed in the lncbookv3-processing Docker image.
+overrun the reference bounds. Requires the UCSC kent tools (provided by
+the ``lncbookv3-kent`` Docker image).
 """
 import argparse
 import os

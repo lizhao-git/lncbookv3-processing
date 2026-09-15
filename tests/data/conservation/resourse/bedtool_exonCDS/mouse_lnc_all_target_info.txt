@@ -1,0 +1,2 @@
+ids	target_transcript_id	target_gene_id
+tx1	mmu_tx1	mmu_gene1

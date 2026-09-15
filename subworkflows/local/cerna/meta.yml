@@ -1,0 +1,9 @@
+name: cerna
+description: lncbookv3-processing cerna subworkflow.
+keywords:
+  - lncbookv3
+  - subworkflow
+components:
+  - modules/local
+authors:
+  - lncbookv3-processing

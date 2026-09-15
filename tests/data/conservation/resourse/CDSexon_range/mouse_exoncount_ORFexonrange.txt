@@ -1,0 +1,2 @@
+target_transcript_id	target_exon_count	target_orf_range
+mmu_tx1	2	NA

@@ -1,0 +1,9 @@
+name: methylation
+description: lncbookv3-processing methylation subworkflow.
+keywords:
+  - lncbookv3
+  - subworkflow
+components:
+  - modules/local
+authors:
+  - lncbookv3-processing

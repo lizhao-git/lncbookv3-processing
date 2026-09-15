@@ -1,35 +1,43 @@
 ---
 name: lncbookv3_processing
-description: Project-level skill for running lncbookv3 genomic annotation pipelines with CWL + Docker.
+description: Project-level skill for running lncbookv3 genomic annotation pipelines with Nextflow DSL2.
 license: MIT
 metadata:
   skill-author: lncbookv3-processing
   skill-type: project-orchestration-skill
-  primary-runtime: cwl
+  primary-runtime: nextflow
 ---
 
 # lncbookv3-processing
 
 ## Execution
 
-This project uses **CWL** as the primary workflow engine with a single Docker runtime image. Build the image once, then run the workflow with `cwltool`:
+This project uses **Nextflow DSL2** as the primary workflow engine. The top-level entry point is `main.nf`; reusable local modules live in `modules/local/`, and branch-level subworkflows live in `subworkflows/local/`.
+
+Run the smoke profile:
 
 ```bash
-docker build -t lncbookv3-processing:latest .
-cwltool --outdir results/cwl cwl/lncbookv3.cwl cwl/lncbookv3-job.yml
+nextflow run . -profile test
 ```
 
-The image bundles Python 3.11, bedtools, BEDOPS, samtools and the UCSC kent tools; Python processes and interval operations run inside it. The gate `ExpressionTool`s use JavaScript, so a `node` binary must be on `PATH`, or the Docker daemon must be running (cwltool then uses `node:alpine`).
-
-## Examples
+Run the reference branch against the main annotation:
 
 ```bash
-# Default run (ClinVar + GWAS + SmProt; COSMIC disabled)
-cwltool --outdir results/cwl cwl/lncbookv3.cwl cwl/lncbookv3-job.yml
-
-# Enable COSMIC after preparing an extracted TSV (edit the job file):
-#   run_cosmic: true
-#   cosmic_tsv: {class: File, path: data/variants/cosmic/cosmic_variants.tsv}
-
-# Run only ClinVar (set the other run_* flags to false, files to null / [])
+nextflow run . --gtf data/LncBook_v3_hg38.lncRNAs_attr_normalized.gtf
 ```
+
+Run with conda or Docker when external binaries are needed:
+
+```bash
+nextflow run . -profile test,conda
+nextflow run . -profile docker --gtf data/LncBook_v3_hg38.lncRNAs_attr_normalized.gtf
+```
+
+## Layout
+
+- `main.nf`: top-level workflow.
+- `nextflow.config`: profiles and parameters.
+- `modules/local/<tool>/main.nf`: one reusable process per tool.
+- `subworkflows/local/<branch>/main.nf`: branch pipelines composed from modules.
+- `tests/data`: smoke-test fixtures.
+- `scripts`: Python implementations used by modules.

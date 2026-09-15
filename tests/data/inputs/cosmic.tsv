@@ -1,0 +1,2 @@
+chrom	pos	ref	alt	cosmic_id	fathmm_mkl_score	disease_name
+chr1	6	A	G	cosm1	0.9	example cancer

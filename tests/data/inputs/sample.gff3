@@ -1,0 +1,4 @@
+##gff-version 3
+chr1	lncbook	gene	1	100	.	+	.	ID=gene1;biotype=lncRNA
+chr1	lncbook	mRNA	1	100	.	+	.	ID=tx1;Parent=gene1;biotype=lncRNA
+chr1	lncbook	exon	1	40	.	+	.	ID=exon1;Parent=tx1

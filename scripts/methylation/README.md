@@ -7,7 +7,7 @@
 > （manifest 的 `gene_list`，可选；缺省时分析差异检验产出的全部基因）进行统计。
 
 这些脚本被打包进 Docker 镜像（`COPY scripts/` → `/opt/lncbookv3/scripts/`），
-由 CWL 分支 `cwl/workflows/methylation.cwl` 调用。
+由 Nextflow 分支 `subworkflows/local/methylation/main.nf` 调用。
 
 ## 脚本
 
@@ -39,13 +39,11 @@ python pipeline.py --manifest methylation.example.json \
 
 `manifest` 结构见 [`methylation.example.json`](methylation.example.json)。
 
-## 用法（CWL/Docker）
+## 用法（Nextflow/Docker）
 
 ```bash
-docker build -t lncbookv3-processing:latest .
-cwltool --outdir results/cwl/methylation \
-  cwl/workflows/methylation.cwl \
-  cwl/methylation-job.yml
+docker build --target kent -t lncbookv3-kent:latest .
+nextflow run . --run_methylation true --methylation_manifest scripts/methylation/methylation.example.json
 ```
 
 在顶层工作流中开启该分支：

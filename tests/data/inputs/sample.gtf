@@ -1,0 +1,4 @@
+chr1	lncbook	gene	1	100	.	+	.	gene_id "gene1"; gene_type "lncRNA";
+chr1	lncbook	transcript	1	100	.	+	.	gene_id "gene1"; transcript_id "tx1"; transcript_type "lncRNA";
+chr1	lncbook	exon	1	40	.	+	.	gene_id "gene1"; transcript_id "tx1"; exon_number "1";
+chr1	lncbook	exon	61	100	.	+	.	gene_id "gene1"; transcript_id "tx1"; exon_number "2";

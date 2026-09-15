@@ -1,0 +1,9 @@
+name: annotation_intervals
+description: lncbookv3-processing annotation_intervals subworkflow.
+keywords:
+  - lncbookv3
+  - subworkflow
+components:
+  - modules/local
+authors:
+  - lncbookv3-processing

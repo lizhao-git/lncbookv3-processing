@@ -1,0 +1,18 @@
+name: format_smprot_intersections
+description: format smprot intersections
+keywords:
+  - lncbookv3
+  - local
+tools:
+  - format_smprot_intersections:
+      description: Local lncbookv3-processing module wrapping project scripts or command line tools.
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+output:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

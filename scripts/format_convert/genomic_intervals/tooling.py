@@ -9,7 +9,7 @@ def require_tool(name: str) -> str:
     if not path:
         raise SystemExit(
             f"Required tool '{name}' was not found on PATH. "
-            "Run inside the lncbookv3-processing Docker image or install it locally."
+            "Install it locally or run inside the Docker image that provides it."
         )
     return path
 

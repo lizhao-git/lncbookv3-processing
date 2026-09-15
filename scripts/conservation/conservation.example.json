@@ -1,0 +1,39 @@
+{
+  "thresholds": {
+    "min_mapped_length": 50,
+    "min_transcript_coverage": 0.2,
+    "min_intron_coverage": 0.0
+  },
+  "species_order": "species_order.tsv",
+  "synteny_anchors": "synteny_anchors.tsv",
+  "species": [
+    {
+      "prefix": "mouse",
+      "species": "Mus_musculus",
+      "lnc": {
+        "query_fasta": "resourse/fas/mouse_lnc_query_simply.fa",
+        "target_fasta": "resourse/fas/mouse_lnc_target_simply.fa",
+        "group_info": "resourse/lnc_group_info/mouse_lnc_group_info.txt",
+        "lengths": "resourse/lnc_lengths/mouse_lnc_lengths.txt",
+        "exon_positions": "resourse/exon_positions.txt",
+        "target_info": "resourse/bedtool_exonCDS/mouse_lnc_all_target_info.txt",
+        "target_addition": "resourse/CDSexon_range/mouse_exoncount_ORFexonrange.txt",
+        "transcript_lengths": "resourse/all_lnc_length.txt",
+        "transcript_meta": "resourse/hg38_all_trans_meta_info_new.txt"
+      },
+      "pc": {
+        "query_fasta": "resourse/fas/mouse_pc_query_simply.fa",
+        "target_fasta": "resourse/fas/mouse_pc_target_simply.fa",
+        "group_info": "resourse/pc_group_info/mouse_pc_group_info.txt",
+        "lengths": "resourse/pc_lengths/mouse_pc_lengths.txt",
+        "exon_positions": "resourse/exon_positions_pro.txt",
+        "target_info": "resourse/bedtool_exonCDS/mouse_all_target_info.txt",
+        "target_addition": "resourse/CDSexon_range/mouse_exoncount_ORFexonrange.txt",
+        "transcript_lengths": "resourse/all_pro_length.txt",
+        "transcript_meta": "resourse/hg38_all_trans_meta_info_new.txt",
+        "cds_positions": "resourse/modified_pc_CDS_positions/mouse_pc_query_add_CDS_positions_simply_extractedCDSpositions.txt"
+      }
+    }
+  ]
+}
+

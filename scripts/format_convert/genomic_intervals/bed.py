@@ -54,4 +54,3 @@ def validate_bed(input_path: str, output_path: str, report_path: str, min_column
     with open_text(input_path, preferred_exts=(".bed",)) as (in_fh, _), open(output_path, "w", encoding="utf-8") as out_fh:
         for raw in in_fh:
             out_fh.write(raw)
-

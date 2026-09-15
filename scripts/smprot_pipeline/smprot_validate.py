@@ -2,8 +2,7 @@
 """Thin wrapper that forwards positional input files as repeated --input-file
 arguments to validate_smprot_tsv.py.
 
-CWL cannot natively emit a repeated ``--input-file <f>`` flag per array item, so
-this wrapper accepts the files as positional arguments and forwards them
+This wrapper accepts SmProt files as positional arguments and forwards them
 correctly. It keeps the original validate_smprot_tsv.py unchanged.
 """
 import argparse
@@ -15,7 +14,7 @@ VALIDATE_SCRIPT = Path(__file__).resolve().parent / "validate_smprot_tsv.py"
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Validate SmProt coordinates (CWL wrapper)")
+    parser = argparse.ArgumentParser(description="Validate SmProt coordinates")
     parser.add_argument("--output-tsv", required=True)
     parser.add_argument("--report", required=True)
     parser.add_argument("files", nargs="+")

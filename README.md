@@ -1,6 +1,6 @@
 # lncbookv3-processing
 
-CWL + Docker pipelines for LncBook v3 genomic annotation processing.
+Nextflow DSL2 pipelines for LncBook v3 genomic annotation processing.
 
 ## Overview
 
@@ -10,197 +10,105 @@ This project maps external genomic resources onto LncBook v3 lncRNA annotations:
 - COSMIC pathogenic variants filtered by FATHMM-MKL score
 - GWAS Catalog genome-wide significant associations
 - SmProt small protein coordinates
+- methylation, ceRNA and lncRNA conservation analyses
 
-The pipeline validates inputs, normalizes records, extracts lncRNA GTF/GFF3 features, validates BED intervals before intersection, intersects coordinates with `bedtools`, and exports annotation tables, summary reports, SQL files, and UCSC Genome Browser BED tracks.
-
-The primary workflow engine is **CWL** (Common Workflow Language) with a single **Docker** runtime image.
+The pipeline validates inputs, normalizes records, extracts reusable GTF/GFF3/BED features, validates intervals before intersection, intersects coordinates with `bedtools`, processes pslMap-derived conservation evidence, and exports annotation tables, reports, SQL files, UCSC Genome Browser BED tracks and database-import tables.
 
 ## Project Layout
 
-- [cwl/lncbookv3.cwl](cwl/lncbookv3.cwl): top-level CWL workflow.
-- [cwl/lncbookv3-job.yml](cwl/lncbookv3-job.yml): example job input.
-- [cwl/workflows/](cwl/workflows): per-branch sub-workflows (reference/clinvar/cosmic/gwas/smprot/methylation/cerna/cerna_predict).
-- [cwl/tools/](cwl/tools): `CommandLineTool` and gate (`ExpressionTool`) definitions.
-- [Dockerfile](Dockerfile): runtime image (Python 3.11 + bedtools + Bedops + samtools + UCSC kent tools + bundled scripts).
-- [scripts/](scripts): Python tools used by the pipeline.
-- [scripts/format_convert/](scripts/format_convert): GTF/GFF3/BED/SAM/BAM/VCF format conversion, VCF processing, UCSC track conversion, feature extraction, and validation entry points, plus the shared `genomic_intervals` parsing library.
-- [scripts/variant_pipeline/](scripts/variant_pipeline): ClinVar/COSMIC/GWAS Catalog variant-processing scripts (validation, filtering, intersection formatting, summarization, export).
-- [scripts/smprot_pipeline/](scripts/smprot_pipeline): SmProt small-protein coordinate validation, filtering, intersection formatting, summarization, and export scripts.
-- [scripts/methylation/](scripts/methylation): refactored methylation analysis pipeline (Python 3).
-- [scripts/cerna_pipeline/](scripts/cerna_pipeline): refactored ceRNA analysis pipeline (Python 3).
-- [data/](data): local input data.
+- [main.nf](main.nf): top-level Nextflow DSL2 entry point.
+- [nextflow.config](nextflow.config): defaults, profiles and container settings.
+- [nextflow_schema.json](nextflow_schema.json): parameter schema.
+- [modules/local/](modules/local): reusable nf-core-style local modules, one process per tool.
+- [subworkflows/local/](subworkflows/local): branch-level subworkflows composed from modules.
+- [tests/data/](tests/data): small smoke-test fixtures.
+- [scripts/](scripts): Python implementations used by the local modules.
+- [Dockerfile](Dockerfile): optional custom images for UCSC kent tools, samtools and ceRNA prediction binaries.
+- [docs/nextflow_pipeline.md](docs/nextflow_pipeline.md): Nextflow-specific architecture and usage notes.
+- [docs/conservation_pipeline.md](docs/conservation_pipeline.md): lncRNA conservation analysis design.
 
-## Reusable Genomic Interval Layer
+## Workflow Structure
 
-Annotation and interval handling is factored out from the reference branch:
+The reference branch always runs:
 
-- `scripts/format_convert/genomic_intervals/annotation.py`: parses GTF/GFF3 attributes, validates 9-column annotations, copies validated annotation text, and extracts `gene/transcript/exon/intron` intervals.
-- `scripts/format_convert/genomic_intervals/bed.py`: validates BED coordinate files as 0-based half-open intervals.
-- `scripts/format_convert/validate_annotation.py`, `scripts/format_convert/extract_annotation_features.py`, and `scripts/format_convert/validate_bed.py`: command-line entry points used by CWL.
-- `scripts/format_convert/validate_gtf.py` and `scripts/format_convert/extract_gtf_features.py`: compatibility wrappers for existing GTF-only calls.
+1. validate the LncBook annotation,
+2. extract `gene/transcript/exon/intron` BED-like features,
+3. validate the extracted BED intervals.
 
-Reusable CWL modules:
+Optional branches are controlled by `params.run_*` flags:
 
-- [cwl/workflows/annotation_intervals.cwl](cwl/workflows/annotation_intervals.cwl): validate GTF/GFF3 and emit BED-like feature intervals.
-- [cwl/workflows/bed_validation.cwl](cwl/workflows/bed_validation.cwl): validate existing BED files before intersection or downstream annotation.
-- [cwl/tools/validate_annotation.cwl](cwl/tools/validate_annotation.cwl), [cwl/tools/extract_annotation_features.cwl](cwl/tools/extract_annotation_features.cwl), and [cwl/tools/validate_bed.cwl](cwl/tools/validate_bed.cwl): low-level reusable tools.
+- `run_clinvar`: ClinVar validation, label filtering, BED validation, intersection, annotation, summary and export.
+- `run_cosmic`: COSMIC validation, FATHMM-MKL filtering, BED validation, intersection, annotation, summary and export.
+- `run_gwas_catalog`: GWAS Catalog validation, genome-wide-significance filtering, BED validation, intersection, annotation, summary and export.
+- `run_smprot`: SmProt validation, coordinate normalization, in-transcript mapping, summary and export.
+- `run_methylation`: manifest-driven methylation analysis.
+- `run_cerna`: manifest-driven ceRNA integration.
+- `run_conservation`: manifest-driven lncRNA conservation analysis.
 
-## Format Conversion, VCF and Track Utilities
+## Reusable Modules
 
-Standalone tools in [scripts/format_convert/](scripts/format_convert), each with a 1:1 `CommandLineTool` in [cwl/tools/](cwl/tools). They are not wired into the main workflow; run them individually.
+The project now follows an nf-core-inspired layout. Every tool lives in its own directory under `modules/local/<tool>/` with:
 
-- Annotation conversion: `convert_annotation_format.py` (GTF <-> GFF3), `bed_to_gff3.py` (BED -> GFF3).
-- Variant conversion: `vcf_to_bed.py` (VCF -> BED).
-- Alignment conversion: `convert_alignment_format.py` (SAM <-> BAM via samtools, optional sort/index), `alignment_to_bed.py` (SAM/BAM -> BED6, optional per-block rows and MAPQ filter).
-- VCF processing: `validate_vcf.py` (header/record/INFO/FORMAT validation with copy-through), `vcf_filter.py` (region/QUAL/DP/allele-type/FILTER), `vcf_sort.py` (contig + position), `vcf_stats.py` (record/allele counts, Ts/Tv), `vcf_split.py` (per-contig / per-sample), `vcf_normalize.py` (split multiallelics, subset Number=A/R/G values).
-- UCSC tracks: `make_ucsc_track.py` (add/replace a track line), `bed_to_bigbed.py` and `bedgraph_to_bigwig.py` (via kent tools, rows sorted by `chrom.sizes`), `bigtrack_to_text.py` (bigBed -> BED, bigWig -> bedGraph).
+- `main.nf`: the DSL2 process,
+- `meta.yml`: module metadata,
+- `environment.yml`: conda dependencies for standalone reuse.
 
-Example (uses the runtime image, like the workflows):
+Branch logic lives in `subworkflows/local/<branch>/main.nf`. This keeps low-level tools testable and reusable while keeping the top-level pipeline readable.
 
-```bash
-cwltool cwl/tools/vcf_stats.cwl --vcf data/variants/clinvar/clinvar_20260503.vcf.gz
-```
-
-## Inputs
-
-Declared by the top-level workflow ([cwl/lncbookv3.cwl](cwl/lncbookv3.cwl)):
-
-| Input | Type | Description |
-| --- | --- | --- |
-| `gtf` | `File` | LncBook v3 GTF. |
-| `run_clinvar` / `clinvar_vcf` | `boolean` / `File?` | Enable the ClinVar branch and supply its VCF. |
-| `run_cosmic` / `cosmic_tsv` | `boolean` / `File?` | Enable the COSMIC branch and supply an extracted TSV (disabled by default). |
-| `run_gwas_catalog` / `gwas_tsv` | `boolean` / `File?` | Enable the GWAS Catalog branch and supply its TSV. |
-| `run_smprot` / `smprot_tsv` | `boolean` / `File[]` | Enable the SmProt branch and supply one or more coordinate files. |
-| `run_methylation` / `methylation_manifest` / `methylation_data_root` | `boolean` / `File?` / `Directory?` | Enable the methylation branch; supply a JSON manifest and the data-root Directory that anchors its relative paths. |
-| `run_cerna` / `cerna_manifest` / `cerna_data_root` | `boolean` / `File?` / `Directory?` | Enable the ceRNA branch; supply a JSON manifest and the data-root Directory that anchors its relative paths. |
-
-Set a branch's file to `null` (or `[]` for `smprot_tsv`) and its `run_*` flag to `false` to skip it. See [cwl/lncbookv3-job.yml](cwl/lncbookv3-job.yml).
-
-## Workflows
-
-ClinVar branch:
-
-1. Validate GTF/GFF3 annotation.
-2. Validate ClinVar VCF.
-3. Extract and validate `gene/transcript/exon/intron` BED features from annotation.
-4. Keep ClinVar variants with one of: `Benign`, `Pathogenic`, `Affects`, `Drug response`, `Protective`, `Risk factor`.
-5. Validate filtered BED intervals and intersect annotation features with filtered ClinVar variants.
-6. Export annotation TSV, summary TSV, SQL, and UCSC BED.
-
-COSMIC branch:
-
-1. Validate COSMIC TSV.
-2. Keep variants with `FATHMM-MKL > 0.7`.
-3. Validate filtered BED intervals and intersect with annotation features.
-4. Export annotation TSV, summary TSV, SQL, and UCSC BED.
-
-GWAS Catalog branch:
-
-1. Validate GWAS Catalog TSV.
-2. Keep associations with `p-value < 5e-8`.
-3. Validate filtered BED intervals and intersect with annotation features.
-4. Export annotation TSV, summary TSV, SQL, and UCSC BED.
-
-SmProt branch:
-
-1. Validate and normalize one or more SmProt coordinate files.
-2. Convert valid records to BED.
-3. Validate filtered BED intervals and intersect with annotation features.
-4. Keep mappings entirely contained in one transcript context and uniquely mapped by `protein_id`.
-5. Export annotation TSV, mapping report, summary TSV, SQL, and UCSC BED.
-
-Methylation branch:
-
-1. Normalize per-dataset methylation data to 0-based BED (bigwig/bigbed/bismark/bed), with optional hg19→hg38 liftover.
-2. Compute per-gene mean methylation over gene body and promoter regions.
-3. Differential methylation testing (Wilcoxon + FDR, or fold-change consistency).
-4. Aggregate cross-dataset significance into a gene × disease matrix, labels and a database-import table.
-
-See [scripts/methylation/README.md](scripts/methylation/README.md).
-
-ceRNA branch:
-
-0. (Optional upstream) Predict miRNA targets from mature miRNA and GTF RNA sequences with miRanda / RNAhybrid / TargetScan — see [cwl/workflows/cerna_predict.cwl](cwl/workflows/cerna_predict.cwl).
-1. Normalize miRanda / RNAhybrid / TargetScan interaction predictions into a unified table.
-2. Intersect the three tools and refine binding sites (TargetScan site within miRanda/RNAhybrid site, plus a 6-nt sliding window).
-3. Map experimentally validated ceRNA (LncRNAWiki + HGNC) and produce the final interaction table.
-4. Annotate diseases via HMDD.
-
-See [scripts/cerna_pipeline/README.md](scripts/cerna_pipeline/README.md).
+BEDOPS converters are exposed as independent modules: `gtf2bed`, `gff2bed`, `vcf2bed`, `sam2bed`, `bam2bed`, `psl2bed`, `rmsk2bed` and `wig2bed`. They use `quay.io/biocontainers/bedops:2.4.42--hd6d6fdc_1` by default, or the module conda environment with `bedops=2.4.42`.
 
 ## Run
 
-### 1. Build the runtime image
+Run the reference branch only:
 
 ```bash
-docker build -t lncbookv3-processing:latest .
+nextflow run . --gtf data/LncBook_v3_hg38.lncRNAs_attr_normalized.gtf
 ```
 
-### 2. Run the workflow
-
-Install `cwltool` (`pip install cwltool`). The gate expressions use JavaScript, so either a `node` binary must be on `PATH`, or the Docker daemon must be running (cwltool then uses a `node:alpine` container).
+Run the bundled smoke profile:
 
 ```bash
-cwltool --outdir results/cwl cwl/lncbookv3.cwl cwl/lncbookv3-job.yml
+nextflow run . -profile test
 ```
 
-Customise the run by editing [cwl/lncbookv3-job.yml](cwl/lncbookv3-job.yml) or supplying an inline job:
+Run with conda environments:
 
 ```bash
-cwltool --outdir results/cwl cwl/lncbookv3.cwl \
-  <(echo 'gtf: {class: File, path: data/LncBook_v3_hg38.lncRNAs_attr_normalized.gtf}
-run_clinvar: true
-clinvar_vcf: {class: File, path: data/variants/clinvar/clinvar_20260503.vcf.gz}
-run_cosmic: false
-cosmic_tsv: null
-run_gwas_catalog: false
-gwas_tsv: null
-run_smprot: false
-smprot_tsv: []')
+nextflow run . -profile test,conda
 ```
 
-Run only ClinVar by setting the other three `run_*` flags to `false` (and their files to `null` / `[]`).
-
-Run only the methylation workflow:
+Run with Docker containers:
 
 ```bash
-cwltool --outdir results/cwl/methylation \
-  cwl/workflows/methylation.cwl \
-  cwl/methylation-job.yml
+nextflow run . -profile docker --gtf data/LncBook_v3_hg38.lncRNAs_attr_normalized.gtf
 ```
 
-Run only the ceRNA workflow:
+Enable branches by supplying both the flag and input path, for example:
 
 ```bash
-cwltool --outdir results/cwl/cerna \
-  cwl/workflows/cerna.cwl \
-  cwl/cerna-job.yml
-```
-
-Run the ceRNA target-prediction stage (mature miRNA + GTF -> prediction files):
-
-```bash
-cwltool --outdir results/cwl/cerna_predict \
-  cwl/workflows/cerna_predict.cwl \
-  cwl/cerna_predict-job.yml
+nextflow run . \
+  --gtf data/LncBook_v3_hg38.lncRNAs_attr_normalized.gtf \
+  --run_clinvar true \
+  --clinvar_vcf data/variants/clinvar/clinvar_20260503.vcf.gz \
+  --run_conservation true \
+  --conservation_manifest scripts/conservation/conservation.example.json \
+  --conservation_data_root data/conservation
 ```
 
 ## Outputs
 
-All branch results are collected under the `--outdir` directory (default `results/cwl`). Key files:
+Process outputs are copied to `results/LNCBOOKV3_PROCESSING/...` by default and are also available as named workflow emits for downstream reuse. Key logical outputs include:
 
-- `gtf_clinvar_site_annotations.tsv`
-- `gtf_cosmic_site_annotations.tsv`
-- `gtf_gwas_catalog_site_annotations.tsv`
-- `gtf_smprot_site_annotations.tsv`
-- `*_summary.tsv`
-- `*_site_annotations.sql`
-- `*_ucsc_track.bed`
-- validation and filtering reports (e.g. `*_validation_report.tsv`, `*_filter_report.tsv`, `smprot_mapping_report.tsv`)
-- `gtf_features_validation_report.tsv` for the reusable annotation feature BED.
-- `methylation_outputs/` and `methylation_report.tsv` when the methylation branch is enabled.
-- `cerna_outputs/` when the ceRNA branch is enabled (predicted interactions, experimental mapping, disease annotation).
-- `cerna_predict/` when the ceRNA prediction stage is run (prepared sequences + normalized miRanda/RNAhybrid/TargetScan predictions).
+- validated annotation and `gtf_features.bed`,
+- branch-specific annotation TSVs,
+- summary TSVs,
+- SQL exports,
+- UCSC BED tracks,
+- validation/filtering reports,
+- `methylation_outputs/`, `cerna_outputs/` and `conservation_outputs/` when those branches are enabled.
 
-Disabled branches produce empty output lists.
+## Notes
+
+- The legacy workflow implementation and job files have been removed.
+- The former smoke-test fixtures were migrated to [tests/data/](tests/data).
+- See [docs/nextflow_pipeline.md](docs/nextflow_pipeline.md) for module/subworkflow reuse examples.

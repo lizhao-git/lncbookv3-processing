@@ -1,0 +1,11 @@
+name: extract_gtf_transcripts
+description: Extract transcript BED intervals from GTF.
+keywords:
+  - lncbookv3
+  - local
+  - gtf
+tools:
+  - extract_gtf_transcripts:
+      description: Local compatibility module wrapping a project script.
+authors:
+  - lncbookv3-processing

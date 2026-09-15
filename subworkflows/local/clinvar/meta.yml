@@ -1,0 +1,9 @@
+name: clinvar
+description: lncbookv3-processing clinvar subworkflow.
+keywords:
+  - lncbookv3
+  - subworkflow
+components:
+  - modules/local
+authors:
+  - lncbookv3-processing

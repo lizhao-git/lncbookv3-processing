@@ -73,21 +73,17 @@ python pipeline.py --manifest cerna.example.json \
 
 `manifest` 结构见 [`cerna.example.json`](cerna.example.json)。
 
-## 用法（CWL/Docker）
+## 用法（Nextflow/Docker）
 
 ```bash
-docker build -t lncbookv3-processing:latest .
-cwltool --outdir results/cwl/cerna \
-  cwl/workflows/cerna.cwl \
-  cwl/cerna-job.yml
+docker build --target cerna-predict -t lncbookv3-cerna-predict:latest .
+nextflow run . --run_cerna true --cerna_manifest scripts/cerna_pipeline/cerna.example.json
 ```
 
 单独运行上游预测工作流：
 
 ```bash
-cwltool --outdir results/cwl/cerna_predict \
-  cwl/workflows/cerna_predict.cwl \
-  cwl/cerna_predict-job.yml
+nextflow run ./subworkflows/local/cerna_predict/main.nf --manifest scripts/cerna_pipeline/cerna_predict.example.json
 ```
 
 在顶层工作流中开启该分支：

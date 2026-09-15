@@ -8,6 +8,10 @@ runs/
 
 # input data (large reference and variant files, kept out of version control)
 data/
+!tests/data/
+!tests/data/**
 
-# local CWL validation environment
-.cwl-venv/
+# local Nextflow runtime state
+.nextflow/
+.nextflow.log*
+work/

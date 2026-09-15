@@ -1,0 +1,18 @@
+name: export_gwas_formats
+description: export gwas formats
+keywords:
+  - lncbookv3
+  - local
+tools:
+  - export_gwas_formats:
+      description: Local lncbookv3-processing module wrapping project scripts or command line tools.
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+output:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

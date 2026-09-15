@@ -1,0 +1,6 @@
+name: lncbookv3-bedops
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - bedops =2.4.42

@@ -1,0 +1,9 @@
+name: smprot
+description: lncbookv3-processing smprot subworkflow.
+keywords:
+  - lncbookv3
+  - subworkflow
+components:
+  - modules/local
+authors:
+  - lncbookv3-processing

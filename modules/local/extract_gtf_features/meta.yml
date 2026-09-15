@@ -1,0 +1,11 @@
+name: extract_gtf_features
+description: Extract gene/transcript/exon/intron BED intervals from GTF.
+keywords:
+  - lncbookv3
+  - local
+  - gtf
+tools:
+  - extract_gtf_features:
+      description: Local compatibility module wrapping a project script.
+authors:
+  - lncbookv3-processing

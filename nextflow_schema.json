@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/lncbookv3/lncbookv3-processing/nextflow_schema.json",
+  "title": "lncbookv3-processing parameters",
+  "type": "object",
+  "properties": {
+    "gtf": { "type": "string", "description": "LncBook GTF/GFF annotation file." },
+    "outdir": { "type": "string", "default": "results" },
+    "run_clinvar": { "type": "boolean", "default": false },
+    "clinvar_vcf": { "type": ["string", "null"] },
+    "run_cosmic": { "type": "boolean", "default": false },
+    "cosmic_tsv": { "type": ["string", "null"] },
+    "run_gwas_catalog": { "type": "boolean", "default": false },
+    "gwas_tsv": { "type": ["string", "null"] },
+    "run_smprot": { "type": "boolean", "default": false },
+    "smprot_tsv": { "type": ["array", "string", "null"] },
+    "run_methylation": { "type": "boolean", "default": false },
+    "methylation_manifest": { "type": ["string", "null"] },
+    "methylation_data_root": { "type": ["string", "null"] },
+    "run_cerna": { "type": "boolean", "default": false },
+    "cerna_manifest": { "type": ["string", "null"] },
+    "cerna_data_root": { "type": ["string", "null"] },
+    "run_conservation": { "type": "boolean", "default": false },
+    "conservation_manifest": { "type": ["string", "null"] },
+    "conservation_data_root": { "type": ["string", "null"] }
+  },
+  "required": ["gtf"]
+}

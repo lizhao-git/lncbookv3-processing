@@ -1,0 +1,18 @@
+name: gff2bed
+description: Convert GFF to BED with BEDOPS gff2bed.
+keywords:
+  - lncbookv3
+  - local
+tools:
+  - gff2bed:
+      description: Local lncbookv3-processing module wrapping project scripts or command line tools.
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+output:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

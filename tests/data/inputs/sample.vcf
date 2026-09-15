@@ -1,0 +1,5 @@
+##fileformat=VCFv4.2
+##contig=<ID=chr1,length=1000>
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+chr1	10	rs1	A	G	60	PASS	CLNSIG=Pathogenic;DP=20
+chr1	25	rs2	AT	A	50	PASS	CLNSIG=Benign;DP=12
