@@ -1,0 +1,12 @@
+{
+  "min_match": 0.95,
+  "chains": [
+    {"species": "human", "from": "hg19", "to": "hg38", "chain": "hg19ToHg38.over.chain.gz"},
+    {"species": "mouse", "from": "mm39", "to": "mm10", "chain": "mm39ToMm10.over.chain.gz"}
+  ],
+  "datasets": [
+    {"name": "human_lncrna", "species": "human", "from": "hg19", "to": "hg38", "input": "human/lncrna.bed"},
+    {"name": "mouse_cage", "species": "mouse", "from": "mm39", "to": "mm10", "input": "mouse/cage.bedgraph"},
+    {"name": "mouse_custom", "species": "mouse", "from": "mm39", "to": "mm10", "input": "mouse/other.bed", "chain": "chains/custom_mm39ToMm10.chain.gz", "min_match": 0.9}
+  ]
+}

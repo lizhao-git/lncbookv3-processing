@@ -1,0 +1,14 @@
+name: lncbookv3-python
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python >=3.10
+  - bedtools
+  - samtools
+  - ucsc-bedtobigbed
+  - ucsc-bedgraphtobigwig
+  - ucsc-bigbedtobed
+  - ucsc-bigwigtobedgraph
+  - ucsc-pslmap
+  - ucsc-liftover
