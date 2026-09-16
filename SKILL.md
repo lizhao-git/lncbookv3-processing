@@ -38,7 +38,7 @@ nextflow run . -profile docker --gtf data/LncBook_v3_hg38.lncRNAs_attr_normalize
 - `main.nf`: top-level workflow.
 - `nextflow.config`: profiles and parameters.
 - `modules/local/<tool>/main.nf`: one reusable process per tool.
-- `modules/nf-core/<tool>/<subtool>/main.nf`: vendored nf-core modules for standard format conversions.
+- `modules/nf-core/<tool>/<subtool>/main.nf`: vendored nf-core modules for standard format conversions and validations.
 - `subworkflows/local/<branch>/main.nf`: branch pipelines composed from modules.
 - `tests/data`: smoke-test fixtures.
 - `scripts`: Python implementations used by modules.

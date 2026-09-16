@@ -58,13 +58,15 @@ Branch logic lives in `subworkflows/local/<branch>/main.nf`. This keeps low-leve
 
 BEDOPS converters are exposed as independent modules: `gtf2bed`, `gff2bed`, `vcf2bed`, `sam2bed`, `bam2bed`, `psl2bed`, `rmsk2bed` and `wig2bed`. They use `quay.io/biocontainers/bedops:2.4.42--hd6d6fdc_1` by default, or the module conda environment with `bedops=2.4.42`.
 
-Standard format conversions are provided by nf-core modules vendored under `modules/nf-core/` (source: [nf-core/modules](https://github.com/nf-core/modules), MIT), replacing the former custom conversion modules:
+Standard format conversions and validations are provided by nf-core modules vendored under `modules/nf-core/` (source: [nf-core/modules](https://github.com/nf-core/modules) @ `0befdd9`, MIT), replacing the former custom conversion modules:
 
 - BED to bigBed: `ucsc/bedtobigbed` (sort first with `bedtools/sort`),
-- bedGraph to bigWig: `ucsc/bedgraphtobigwig`,
-- BED to GFF3: `agat/convertbed2gff`,
-- GFF/GTF to GFF3/GTF: `agat/convertspgxf2gxf` and `agat/convertspgff2gtf`,
-- SAM/BAM/CRAM conversion, sorting and indexing: `samtools/view`, `samtools/sort` and `samtools/index`.
+- bedGraph to bigWig: `ucsc/bedgraphtobigwig`; WIG to bigWig: `ucsc/wigtobigwig`; out-of-bounds clipping: `ucsc/bedclip`,
+- BED to GFF3: `agat/convertbed2gff`; GFF3 to BED12: `agat/convertgff2bed`; GFF/GTF to GFF3/GTF: `agat/convertspgxf2gxf` and `agat/convertspgff2gtf`; GTF to BED: `bedops/gtf2bed`; BAM/GFF/GTF/GVF/PSL to BED: `bedops/convert2bed`; GTF to genePred: `ucsc/gtftogenepred`; GFF/GTF validate and convert: `gffread`,
+- coverage tracks: `bedtools/genomecov` (BAM/BED to bedGraph) and `deeptools/bamcoverage` (BAM to bigWig/bedGraph); BAM to BED12: `bedtools/bamtobed`,
+- VCF/BCF: `bcftools/view`, `bcftools/query`; BED to VCF: `bedgovcf`,
+- SAM/BAM/CRAM conversion, sorting and indexing: `samtools/view`, `samtools/sort` and `samtools/index`,
+- validation: `gt/gff3validator` (GFF3), `htsnimtools/vcfcheck` (VCF), `samtools/quickcheck` (BAM/CRAM).
 
 See [docs/nextflow_pipeline.md](docs/nextflow_pipeline.md) for import statements, recommended compositions and `ext.args` examples.
 
