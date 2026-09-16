@@ -1,0 +1,18 @@
+name: validate_bedgraph
+description: Validate a bedGraph coverage file (4 columns, integer ranges, finite values) and copy it through.
+keywords:
+  - lncbookv3
+  - local
+tools:
+  - validate_bedgraph:
+      description: Local lncbookv3-processing module wrapping project scripts or command line tools.
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+output:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

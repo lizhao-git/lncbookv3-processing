@@ -1,0 +1,18 @@
+name: validate_sam
+description: Validate a SAM alignment file (headers, 11 mandatory fields, CIGAR/SEQ consistency) without samtools and copy it through.
+keywords:
+  - lncbookv3
+  - local
+tools:
+  - validate_sam:
+      description: Local lncbookv3-processing module wrapping project scripts or command line tools.
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+output:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing
