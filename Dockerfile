@@ -17,9 +17,18 @@
 # kent-dependent Python tools.
 FROM ubuntu:24.04 AS kent
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        python3 bedops wget ca-certificates \
+# libmariadb3/libcurl4t64 are runtime dependencies of the kent binaries
+# (liftOver links against libmariadb and libcurl). The backports pocket is
+# dropped and apt update is retried to survive flaky port mirrors.
+RUN sed -i 's/ noble-backports//' /etc/apt/sources.list.d/ubuntu.sources \
+    && for attempt in 1 2 3 4 5; do \
+        apt-get -o Acquire::Retries=3 update && break || sleep 10; \
+    done \
+    && for attempt in 1 2 3 4 5; do \
+        apt-get -o Acquire::Retries=3 install -y --no-install-recommends \
+            python3 bedops wget ca-certificates libmariadb3 libcurl4t64 \
+        && break || sleep 10; \
+    done \
     && rm -rf /var/lib/apt/lists/*
 
 # amd64 builds come from the current linux.x86_64 directory, arm64 from the
@@ -30,7 +39,7 @@ RUN case "${TARGETARCH:-amd64}" in \
         arm64) base="https://hgdownload.soe.ucsc.edu/admin/exe/linux.aarch64.v492" ;; \
         *) base="https://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64" ;; \
     esac \
-    && for tool in bedToBigBed bedGraphToBigWig bigBedToBed bigWigToBedGraph bigWigToWig liftOver pslMap pslToPslx; do \
+    && for tool in bedToBigBed bedGraphToBigWig bigBedToBed bigWigToBedGraph bigWigToWig bigWigInfo bigBedInfo liftOver pslMap pslToPslx; do \
         wget -q "${base}/${tool}" -O "/usr/local/bin/${tool}" \
         && chmod +x "/usr/local/bin/${tool}"; \
     done
