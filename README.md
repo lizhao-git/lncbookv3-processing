@@ -63,10 +63,13 @@ Standard format conversions and validations are provided by nf-core modules vend
 - BED to bigBed: `ucsc/bedtobigbed` (sort first with `bedtools/sort`),
 - bedGraph to bigWig: `ucsc/bedgraphtobigwig`; WIG to bigWig: `ucsc/wigtobigwig`; out-of-bounds clipping: `ucsc/bedclip`,
 - BED to GFF3: `agat/convertbed2gff`; GFF3 to BED12: `agat/convertgff2bed`; GFF/GTF to GFF3/GTF: `agat/convertspgxf2gxf` and `agat/convertspgff2gtf`; GTF to BED: `bedops/gtf2bed`; BAM/GFF/GTF/GVF/PSL to BED: `bedops/convert2bed`; GTF to genePred: `ucsc/gtftogenepred`; GFF/GTF validate and convert: `gffread`,
-- coverage tracks: `bedtools/genomecov` (BAM/BED to bedGraph) and `deeptools/bamcoverage` (BAM to bigWig/bedGraph); BAM to BED12: `bedtools/bamtobed`,
-- VCF/BCF: `bcftools/view`, `bcftools/query`; BED to VCF: `bedgovcf`,
+- coverage tracks: `bedtools/genomecov` (BAM/BED to bedGraph) and `deeptools/bamcoverage` (BAM to bigWig/bedGraph); BAM to BED12: `bedtools/bamtobed`; bedMethyl to bigWig: `modkit/bedmethyltobigwig`,
+- VCF/BCF: `bcftools/view`, `bcftools/query`; BED to VCF: `bedgovcf`; region extraction: `gvcftools/extractvariants`,
 - SAM/BAM/CRAM conversion, sorting and indexing: `samtools/view`, `samtools/sort` and `samtools/index`,
-- validation: `gt/gff3validator` (GFF3), `htsnimtools/vcfcheck` (VCF), `samtools/quickcheck` (BAM/CRAM).
+- liftover and indexing: `ucsc/liftover` (BED + chain → lifted/unlifted BED), `picard/liftovervcf` (VCF + chain + reference FASTA → lifted VCF), `htslib/bgziptabix` and `tabix/bgzip` (bgzip + tabix/CSI indexing),
+- validation: `gt/gff3validator` (GFF3), `htsnimtools/vcfcheck` (VCF), `samtools/quickcheck` (BAM/CRAM), plus the local validators `validate_bigtrack` (bigWig/bigBed), `validate_bedgraph`, `validate_wig`, `validate_genepred`, `validate_sam`, `validate_chain` and `validate_fasta`.
+
+Local liftover helpers extend the vendored module: `liftover` (adds the unmapped BED, `--min-match` and a mapping-rate report) and `liftover_multi` (multi-species/assembly liftover from a JSON manifest; see `scripts/format_convert/liftover.example.json`).
 
 See [docs/nextflow_pipeline.md](docs/nextflow_pipeline.md) for import statements, recommended compositions and `ext.args` examples.
 

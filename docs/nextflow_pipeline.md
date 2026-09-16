@@ -59,7 +59,7 @@ BEDOPS converters are available as local modules (`gtf2bed`, `gff2bed`, `vcf2bed
 
 ## Format conversions and validations via nf-core modules
 
-Standard format conversions and validations use nf-core modules vendored under `modules/nf-core/` (copied from [nf-core/modules](https://github.com/nf-core/modules), MIT licence; `main.nf`, `environment.yml` and `meta.yml` only). Each module reads extra tool arguments from `task.ext.args` and the output prefix from `task.ext.prefix`. 25 modules are vendored, pinned to nf-core/modules commit [`0befdd9`](https://github.com/nf-core/modules/commit/0befdd9db2975ee04a97decc1672a4304387e9a7).
+Standard format conversions and validations use nf-core modules vendored under `modules/nf-core/` (copied from [nf-core/modules](https://github.com/nf-core/modules), MIT licence; `main.nf`, `environment.yml` and `meta.yml` only). Each module reads extra tool arguments from `task.ext.args` and the output prefix from `task.ext.prefix`. 31 modules are vendored, pinned to nf-core/modules commit [`0befdd9`](https://github.com/nf-core/modules/commit/0befdd9db2975ee04a97decc1672a4304387e9a7).
 
 The packed converter modules (`bed_to_bigbed` and `bedgraph_to_bigwig`) are gone: `bedToBigBed` and `bedGraphToBigWig` expect records grouped per chromosome with ascending starts (`bedGraphToBigWig` offers no `-sort` flag), so sort first with `bedtools/sort` and pass the same `chrom.sizes` to the converter:
 
@@ -129,6 +129,7 @@ Coverage tracks (alignment/intervals → bedGraph, bigWig, BED):
 | `bedtools/genomecov` | BAM or BED intervals → coverage bedGraph (`-bg`), histogram or per-base reports, with optional built-in sort |
 | `deeptools/bamcoverage` | BAM (+ index, optional FASTA and blacklist) → bigWig, or bedGraph with `--outFileFormat bedgraph` |
 | `bedtools/bamtobed` | BAM → BED12 |
+| `modkit/bedmethyltobigwig` | bedMethyl (ONT modkit) → bigWig (needs `chrom.sizes`) |
 
 VCF/BCF conversions:
 
@@ -137,6 +138,16 @@ VCF/BCF conversions:
 | `bcftools/view` | subset/filter VCF/BCF by regions, targets or samples; output type via `ext.args` (`-Oz`, `-Ob`, ...) |
 | `bcftools/query` | extract VCF/BCF fields into a table (`-f` format string via `ext.args`, file suffix via `ext.suffix`, default `txt`) |
 | `bedgovcf` | BED + YAML config + FASTA index → bgzipped VCF |
+| `gvcftools/extractvariants` | extract variants in a region list from a VCF/BCF |
+
+Liftover, compression and indexing:
+
+| Module | Direction |
+| --- | --- |
+| `ucsc/liftover` | BED + chain file → lifted and unlifted BED |
+| `picard/liftovervcf` | VCF + chain + reference FASTA → lifted VCF |
+| `htslib/bgziptabix` | bgzip (or decompress) a file and optionally build a tabix/CSI index |
+| `tabix/bgzip` | bgzip compression with optional tabix index |
 
 Generic format validation (complements the data-specific `validate_*` local modules used by the pipeline branches):
 
@@ -157,12 +168,54 @@ workflow {
 }
 ```
 
+### Cross-assembly and multi-species liftover
+
+Cross-assembly liftover is available in three flavours:
+
+- `ucsc/liftover` (vendored nf-core module): one BED file plus one chain file per task (`liftOver` under the hood, kent v482 container).
+- `modules/local/liftover`: wraps `scripts/format_convert/liftover.py`. In addition to the vendored module it emits the unmapped BED, exposes `--min-match` (default `0.95`) and writes a mapping-rate report (`input_records`, `mapped_records`, `unmapped_records`, `mapping_rate`). Runs in the kent container (`container_kent`).
+- `modules/local/liftover_multi`: wraps `scripts/format_convert/liftover_multi.py`, a JSON-manifest driver for many species/assemblies in one task. The manifest registers chain files per `(species, from, to)` and lists datasets referencing them; see [scripts/format_convert/liftover.example.json](../scripts/format_convert/liftover.example.json).
+
+Manifest layout:
+
+```json
+{
+  "min_match": 0.95,
+  "chains": [
+    {"species": "human", "from": "hg19", "to": "hg38", "chain": "chains/hg19ToHg38.over.chain.gz"},
+    {"species": "mouse", "from": "mm39", "to": "mm10", "chain": "chains/mm39ToMm10.over.chain.gz"}
+  ],
+  "datasets": [
+    {"name": "human_lncrna", "species": "human", "from": "hg19", "to": "hg38", "input": "human/lncrna.bed"},
+    {"name": "mouse_other", "species": "mouse", "from": "mm39", "to": "mm10", "input": "mouse/other.bed", "chain": "chains/custom.chain.gz", "min_match": 0.9}
+  ]
+}
+```
+
+Datasets may override the global `min_match` and point at a dataset-specific `chain`; otherwise the chain registry is looked up by `(species, from, to)`. Relative `input`/`chain` paths are resolved against `--data-root`. Each dataset produces `<name>.lifted.bed` and `<name>.unmapped.bed` under `--output-dir` (`liftover_outputs`), and the summary `liftover_report.tsv` records `dataset, species, from, to, chain, status, input_records, mapped_records, unmapped_records, mapping_rate, message`. A failing dataset is recorded and does not abort the remaining ones, but the task exits non-zero if any dataset failed.
+
+### Local format validators
+
+Formats without an nf-core validation module are covered by local modules that wrap `scripts/format_convert/validate_*.py` (stdlib only; each validates and then copies the input through):
+
+| Module | Checks |
+| --- | --- |
+| `validate_bigtrack` | bigWig/bigBed via kent `bigWigInfo`/`bigBedInfo` (`version`, `chromCount`, `basesCovered`, item statistics); runs in the kent container |
+| `validate_bedgraph` | 4 columns, integer ranges with `start < end`, finite values, ordering warnings |
+| `validate_wig` | `fixedStep`/`variableStep` state machine, implicit positions, 1-based ordinates, ordering warnings |
+| `validate_genepred` | genePred vs refFlat auto-detection, exon count/list consistency, exon and CDS bounds |
+| `validate_sam` | headers (@HD first, @SQ SN/LN), 11 mandatory fields, CIGAR/SEQ/QUAL consistency, optional tag syntax — no samtools needed |
+| `validate_chain` | chain header fields, strand/size checks, block accounting against target/query spans, size-only terminator |
+| `validate_fasta` | IUPAC alphabet (warnings for other characters), duplicate headers, empty sequences, length statistics |
+
+`validate_chain` is also useful as a pre-flight check before `liftover`/`liftover_multi` runs, and `validate_bedgraph`/`validate_wig` before `bedGraphToBigWig`/`wigToBigWig`.
+
 ### Not available as nf-core modules
 
 The nf-core/modules catalogue (checked at commit `0befdd9`) has no modules for these conversions and checks; keep using the kent binaries or the remaining local modules:
 
 - bigWig → bedGraph/text and bigBed → BED: keep using the local `bigtrack_to_text` module (`bigWigToBedGraph` / `bigBedToBed`).
-- Generic BED, GTF and annotation validators: the local `validate_bed`, `validate_gtf` and `validate_annotation` modules keep that role.
+- Generic BED, GTF and annotation validators: the local `validate_bed`, `validate_gtf` and `validate_annotation` modules keep that role; bedGraph, WIG, genePred/refFlat, SAM, chain, FASTA and bigWig/bigBed now have their own local validators (`validate_bedgraph`, `validate_wig`, `validate_genepred`, `validate_sam`, `validate_chain`, `validate_fasta`, `validate_bigtrack`).
 - BED → GATK interval_list: `gatk4/bedtointervallist`, `gatk4/intervallisttobed` and `picard/bedtointervallist` exist upstream but are GATK-specific; vendor them only if the pipeline adopts GATK tooling.
 
-Related nf-core modules that exist but are not vendored because they are indexing/compression helpers, tool-specific variants or other storage formats: `tabix/bgzip`, `tabix/tabix`, `tabix/bgziptabix`, `samtools/bgzip`, `htslib/bgziptabix`; `ucsc/liftover` and `picard/liftovervcf` (cross-assembly liftover); `ea-utils/gtf2bed`, `gtfsort`, `gffcompare`; `biscuit/vcf2bed`, `svtk/vcf2bed` (tool-specific VCF → BED); `plink2/vcf2bgen`, `vcf2db`, `vcf2maf`, `vcf2zarr`, `bio2zarr/vcf2zarrconvert` (VCF → other storage/report formats).
+Liftover and compression are now vendored (`ucsc/liftover`, `picard/liftovervcf`, `htslib/bgziptabix`, `tabix/bgzip`). Related nf-core modules that remain unvendored because they are tool-specific variants or other storage formats: `tabix/tabix` and `samtools/bgzip` (superseded by `htslib/bgziptabix` for compress-and-index); `ea-utils/gtf2bed`, `gtfsort`, `gffcompare`; `biscuit/vcf2bed`, `svtk/vcf2bed` (tool-specific VCF → BED); `plink2/vcf2bgen`, `vcf2db`, `vcf2maf`, `vcf2zarr`, `bio2zarr/vcf2zarrconvert` (VCF → other storage/report formats).

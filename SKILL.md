@@ -33,6 +33,10 @@ nextflow run . -profile test,conda
 nextflow run . -profile docker --gtf data/LncBook_v3_hg38.lncRNAs_attr_normalized.gtf
 ```
 
+## Format conversions, validations and liftover
+
+Standard conversions and validations come from nf-core modules vendored under `modules/nf-core/`; formats without an upstream module are covered by local modules (`validate_bigtrack`, `validate_bedgraph`, `validate_wig`, `validate_genepred`, `validate_sam`, `validate_chain`, `validate_fasta`). Cross-assembly liftover: use `modules/local/liftover` for a single track or `modules/local/liftover_multi` for many species/assemblies from a JSON manifest (`scripts/format_convert/liftover.example.json`).
+
 ## Layout
 
 - `main.nf`: top-level workflow.
