@@ -67,7 +67,7 @@ Standard format conversions and validations are provided by nf-core modules vend
 - VCF/BCF: `bcftools/view`, `bcftools/query`; BED to VCF: `bedgovcf`; region extraction: `gvcftools/extractvariants`,
 - SAM/BAM/CRAM conversion, sorting and indexing: `samtools/view`, `samtools/sort` and `samtools/index`,
 - liftover and indexing: `ucsc/liftover` (BED + chain → lifted/unlifted BED), `picard/liftovervcf` (VCF + chain + reference FASTA → lifted VCF), `htslib/bgziptabix` and `tabix/bgzip` (bgzip + tabix/CSI indexing),
-- validation: `gt/gff3validator` (GFF3), `htsnimtools/vcfcheck` (VCF), `samtools/quickcheck` (BAM/CRAM), plus the local validators `validate_bigtrack` (bigWig/bigBed), `validate_bedgraph`, `validate_wig`, `validate_genepred`, `validate_sam`, `validate_chain` and `validate_fasta`.
+- validation: `gt/gff3validator` (GFF3), `htsnimtools/vcfcheck` (VCF), `samtools/quickcheck` (BAM/CRAM), plus the local validators `validate_bigtrack` (bigWig/bigBed), `validate_bedgraph`, `validate_wig`, `validate_genepred`, `validate_sam`, `validate_chain`, `validate_fasta`, `validate_psl`, `validate_rmsk`, `validate_chrom_sizes`, `validate_bedmethyl`, `validate_maf` and `validate_plink`.
 
 Local liftover helpers extend the vendored module: `liftover` (adds the unmapped BED, `--min-match` and a mapping-rate report) and `liftover_multi` (multi-species/assembly liftover from a JSON manifest; see `scripts/format_convert/liftover.example.json`).
 
