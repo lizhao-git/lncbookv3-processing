@@ -1,0 +1,28 @@
+name: validate_bedmethyl
+description: Validate a bedMethyl file (modkit 18-column or ENCODE 11-column layout, strand and modification code syntax, count arithmetic, percent consistency) and copy it through.
+keywords:
+  - lncbookv3
+  - local
+  - bedmethyl
+  - methylation
+  - modkit
+tools:
+  - validate_bedmethyl:
+      description: Stdlib structural pass for bedMethyl modification calls.
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - bedmethyl:
+      type: file
+      description: bedMethyl file with per-base modification counts (modkit 18-column or ENCODE 11-column layout).
+      pattern: "*.{bedmethyl,bed.gz,bed,txt}"
+output:
+  - validated_bedmethyl:
+      type: file
+      description: The input bedMethyl copied through unchanged.
+  - report:
+      type: file
+      description: metric/value TSV report with error and warning detail.
+authors:
+  - lncbookv3-processing

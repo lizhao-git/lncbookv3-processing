@@ -1,0 +1,28 @@
+name: validate_maf
+description: Validate a TCGA MAF file (core and expected column presence, coordinate and allele syntax, variant type consistency, duplicate records) and copy it through.
+keywords:
+  - lncbookv3
+  - local
+  - maf
+  - tcga
+  - variants
+tools:
+  - validate_maf:
+      description: Stdlib structural pass for MAF mutation tables.
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - maf:
+      type: file
+      description: TCGA MAF file with comment lines, a header row and one mutation record per line.
+      pattern: "*.{maf,maf.gz}"
+output:
+  - validated_maf:
+      type: file
+      description: The input MAF copied through unchanged.
+  - report:
+      type: file
+      description: metric/value TSV report with error and warning detail.
+authors:
+  - lncbookv3-processing

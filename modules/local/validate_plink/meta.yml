@@ -1,0 +1,32 @@
+name: validate_plink
+description: Validate a PLINK 1.x pair (.map variant table and .ped pedigree/genotype table) including cross-file marker count agreement, and copy both files through.
+keywords:
+  - lncbookv3
+  - local
+  - plink
+  - genotype
+  - variants
+tools:
+  - validate_plink:
+      description: Stdlib structural pass for PLINK .map and .ped files.
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - map:
+      type: file
+      description: PLINK .map variant table (chromosome, variant id, cM, bp).
+      pattern: "*.map"
+  - ped:
+      type: file
+      description: PLINK .ped pedigree and genotype table (six fixed fields plus two allele tokens per variant).
+      pattern: "*.ped"
+output:
+  - validated_plink:
+      type: file
+      description: The input .map and .ped copied through unchanged.
+  - report:
+      type: file
+      description: metric/value TSV report with error and warning detail.
+authors:
+  - lncbookv3-processing
