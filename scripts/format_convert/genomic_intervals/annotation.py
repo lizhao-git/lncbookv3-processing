@@ -1,4 +1,7 @@
+import heapq
+import os
 import re
+import tempfile
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 
@@ -239,6 +242,23 @@ def _resolve_utr_side(strand: str, start: int, end: int, cds_min, cds_max, expli
     return "utr5" if before_cds else "utr3"
 
 
+_FEATURE_CHUNK_ROWS = 250_000
+
+
+def _feature_row_key(row):
+    return (row[0], int(row[1]), int(row[2]), row[3], row[4])
+
+
+def _flush_feature_chunk(rows, chunk_paths, work_dir):
+    """Sort one buffered chunk of feature rows and spill it to a temp file."""
+    rows.sort(key=_feature_row_key)
+    fd, path = tempfile.mkstemp(prefix=".features_chunk_", suffix=".tsv", dir=work_dir)
+    with os.fdopen(fd, "w", encoding="utf-8") as chunk_fh:
+        for row in rows:
+            chunk_fh.write("\t".join(row) + "\n")
+    chunk_paths.append(path)
+
+
 def extract_features(input_path: str, output_bed: str, fmt: str = "auto", features=None):
     """Extract gene/transcript/exon/intron/CDS/UTR intervals into a BED-like table.
 
@@ -259,7 +279,19 @@ def extract_features(input_path: str, output_bed: str, fmt: str = "auto", featur
     explicit_utr_by_tx = defaultdict(list)
     exon_idx_by_tx = defaultdict(int)
     tx_meta = {}
+    # Output rows are sorted by (chrom, start, end, kind, id). Large
+    # annotations (e.g. full GENCODE) yield millions of rows, far beyond the
+    # process memory budget, so the buffer is flushed in sorted chunks and the
+    # chunks are merged at the end instead of holding every row in memory.
+    chunk_paths = []
+    work_dir = os.path.dirname(os.path.abspath(output_bed)) or "."
     rows = []
+
+    def emit(row):
+        rows.append(row)
+        if len(rows) >= _FEATURE_CHUNK_ROWS:
+            _flush_feature_chunk(rows, chunk_paths, work_dir)
+            rows.clear()
 
     for _line_no, record, error in iter_annotation(input_path, fmt):
         if error or record is None:
@@ -275,20 +307,20 @@ def extract_features(input_path: str, output_bed: str, fmt: str = "auto", featur
 
         if kind == "gene":
             if "gene" in selected:
-                rows.append(to_bed_row(record, "gene", gid, gid, "NA", gtype, "NA"))
+                emit(to_bed_row(record, "gene", gid, gid, "NA", gtype, "NA"))
         elif kind == "transcript":
             if "transcript" in selected:
-                rows.append(to_bed_row(record, "transcript", tid, gid, tid, gtype, ttype))
+                emit(to_bed_row(record, "transcript", tid, gid, tid, gtype, ttype))
         elif kind == "exon":
             exons_by_tx[key].append((record.start, record.end))
             exon_idx_by_tx[key] += 1
             exon_no = record.attrs.get("exon_number", str(exon_idx_by_tx[key]))
             if "exon" in selected:
-                rows.append(to_bed_row(record, "exon", f"{tid}:exon{exon_no}", gid, tid, gtype, ttype))
+                emit(to_bed_row(record, "exon", f"{tid}:exon{exon_no}", gid, tid, gtype, ttype))
         elif feature == "CDS":
             cds_by_tx[key].append((record.start, record.end))
             if "cds" in selected:
-                rows.append(to_bed_row(record, "CDS", f"{tid}:CDS", gid, tid, gtype, ttype))
+                emit(to_bed_row(record, "CDS", f"{tid}:CDS", gid, tid, gtype, ttype))
         elif feature in EXPLICIT_UTR_FEATURES:
             explicit_utr_by_tx[key].append((record.start, record.end, feature))
 
@@ -304,7 +336,7 @@ def extract_features(input_path: str, output_bed: str, fmt: str = "auto", featur
                 if intron_start <= intron_end:
                     intron_idx += 1
                     fake = AnnotationRecord(chrom, ".", "intron", intron_start, intron_end, ".", strand, ".", "", {})
-                    rows.append(to_bed_row(fake, "intron", f"{tid}:intron{intron_idx}", gid, tid, gtype, ttype))
+                    emit(to_bed_row(fake, "intron", f"{tid}:intron{intron_idx}", gid, tid, gtype, ttype))
 
     if want_utr:
         for key, exons in exons_by_tx.items():
@@ -349,12 +381,34 @@ def extract_features(input_path: str, output_bed: str, fmt: str = "auto", featur
                     continue
                 label = {"utr5": "5UTR", "utr3": "3UTR"}.get(which, "UTR")
                 fake = AnnotationRecord(chrom, ".", label, s, e, ".", strand, ".", "", {})
-                rows.append(to_bed_row(fake, label, f"{tid}:{label}", gid, tid, gtype, ttype))
+                emit(to_bed_row(fake, label, f"{tid}:{label}", gid, tid, gtype, ttype))
 
-    rows.sort(key=lambda row: (row[0], int(row[1]), int(row[2]), row[3], row[4]))
     with open(output_bed, "w", encoding="utf-8") as out:
-        for row in rows:
-            out.write("\t".join(row) + "\n")
+        if not chunk_paths:
+            rows.sort(key=_feature_row_key)
+            for row in rows:
+                out.write("\t".join(row) + "\n")
+            return
+        if rows:
+            _flush_feature_chunk(rows, chunk_paths, work_dir)
+            rows.clear()
+        try:
+            readers = [open(path, "r", encoding="utf-8") for path in chunk_paths]
+            try:
+                merged = heapq.merge(
+                    *readers, key=lambda line: _feature_row_key(line.split("\t"))
+                )
+                for line in merged:
+                    out.write(line)
+            finally:
+                for reader in readers:
+                    reader.close()
+        finally:
+            for path in chunk_paths:
+                try:
+                    os.remove(path)
+                except OSError:
+                    pass
 
 
 def extract_transcripts(input_path: str, output_bed: str, fmt: str = "auto"):
