@@ -127,4 +127,5 @@ Process outputs are copied to `results/LNCBOOKV3_PROCESSING/...` by default and 
 
 - The legacy workflow implementation and job files have been removed.
 - The former smoke-test fixtures were migrated to [tests/data/](tests/data).
+- GTF/GFF3 annotation inputs may be gzip-compressed (`*.gtf.gz`, `*.gff3.gz`); compression is auto-detected.
 - See [docs/nextflow_pipeline.md](docs/nextflow_pipeline.md) for module/subworkflow reuse examples.

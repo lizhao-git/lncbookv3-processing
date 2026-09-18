@@ -4,7 +4,7 @@
   "title": "lncbookv3-processing parameters",
   "type": "object",
   "properties": {
-    "gtf": { "type": "string", "description": "LncBook GTF/GFF annotation file." },
+    "gtf": { "type": "string", "description": "LncBook GTF/GFF annotation file (plain or gzip-compressed)." },
     "outdir": { "type": "string", "default": "results" },
     "run_clinvar": { "type": "boolean", "default": false },
     "clinvar_vcf": { "type": ["string", "null"] },
