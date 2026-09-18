@@ -1,0 +1,29 @@
+name: psl_stats
+description: Generate alignment statistics for a PSL file using UCSC kent pslStats.
+keywords:
+  - psl
+  - stats
+  - ucsc
+  - kent
+tools:
+  - pslStats:
+      description: UCSC kent tool that reports per-alignment and aggregate statistics for PSL files.
+      homepage: https://hgdownload.soe.ucsc.edu/admin/exe/
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: PSL alignment file (ideally sorted).
+      pattern: "*.{psl,pslx}"
+output:
+  - stats:
+      type: file
+      description: Alignment statistics report.
+      pattern: "*.stats"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

@@ -1,0 +1,38 @@
+name: bed_to_psl
+description: Convert a BED file to PSL format (100% match, single block per interval).
+keywords:
+  - bed
+  - psl
+  - conversion
+  - alignment
+tools:
+  - bed_to_psl:
+      description: |
+        Python script that converts each BED interval into a PSL alignment
+        record with 100% identity (no mismatches, no gaps). Query length is
+        set to the interval length; target coordinates use BED chrom/start/end
+        directly. A chrom.sizes file is recommended for accurate tSize.
+        The standard psLayout version 3 header is prepended.
+      homepage: https://github.com/lncbookv3-processing
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: BED file (>=3 tab-delimited columns).
+      pattern: "*.bed"
+  - target_sizes:
+      type: file
+      description: Optional chrom.sizes file for accurate tSize values.
+      pattern: "*.sizes"
+output:
+  - psl:
+      type: file
+      description: PSL alignment file (21-field, psLayout version 3).
+      pattern: "*.psl"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

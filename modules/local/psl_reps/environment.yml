@@ -1,0 +1,6 @@
+name: lncbookv3-ucsc-pslreps
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - ucsc-pslreps

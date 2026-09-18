@@ -1,0 +1,20 @@
+name: aggregate_pipeline_logs
+description: Concatenate pipeline step reports (validation reports, summaries) into a single pipeline run log.
+keywords: [logging, reports, aggregation]
+input:
+  - meta:
+      type: map
+      description: Groovy Map containing sample information (e.g. [id: 'test']).
+  - reports:
+      type: file
+      description: List of metric/value TSV reports to aggregate, in step order.
+  - log_name:
+      type: val
+      description: Name for the aggregated run log.
+output:
+  - log:
+      type: file
+      description: Aggregated plain-text run log with one section per report.
+      pattern: "*.log"
+authors:
+  - lncbookv3-processing

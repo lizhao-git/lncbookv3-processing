@@ -1,0 +1,30 @@
+name: chain_merge_sort
+description: Merge and sort multiple UCSC chain files using kent chainMergeSort.
+keywords:
+  - chain
+  - merge
+  - sort
+  - ucsc
+  - kent
+tools:
+  - chainMergeSort:
+      description: UCSC kent tool that merges and sorts chain files. Output goes to stdout.
+      homepage: https://hgdownload.soe.ucsc.edu/admin/exe/
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: One or more UCSC chain files.
+      pattern: "*.chain"
+output:
+  - chain:
+      type: file
+      description: Merged and sorted chain file.
+      pattern: "*.chain"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

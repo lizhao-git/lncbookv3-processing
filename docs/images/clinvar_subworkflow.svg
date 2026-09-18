@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 720" width="100%" role="img" aria-labelledby="t d">
+  <title id="t">CLINVAR subworkflow composition</title>
+  <desc id="d">ClinVar VCF and annotation GTF are validated and converted separately, joined by a bedtools intersect, then formatted, summarised and exported.</desc>
+
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <text x="30" y="28" font-family="sans-serif" font-size="14" font-weight="500" fill="#2C2C2A">CLINVAR subworkflow: variant to GTF composition</text>
+
+  <g>
+    <rect x="60" y="50" width="200" height="48" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="160" y="70" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13" font-weight="500" fill="#2C2C2A">ClinVar VCF</text>
+    <text x="160" y="86" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11" fill="#5F5E5A">input</text>
+  </g>
+  <g>
+    <rect x="540" y="50" width="200" height="48" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="640" y="70" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13" font-weight="500" fill="#2C2C2A">Annotation GTF</text>
+    <text x="640" y="86" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11" fill="#5F5E5A">input</text>
+  </g>
+
+  <path d="M160 98 L160 138" fill="none" stroke="#85B7EB" stroke-width="1.5" marker-end="url(#a)"/>
+  <path d="M640 98 L640 138" fill="none" stroke="#85B7EB" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <g>
+    <rect x="50" y="140" width="220" height="48" rx="8" fill="#E6F1FB" stroke="#85B7EB" stroke-width="0.5"/>
+    <text x="160" y="158" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" font-weight="500" fill="#0C447C">VALIDATE_CLINVAR_VCF</text>
+    <text x="160" y="175" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11" fill="#185FA5">validation</text>
+  </g>
+  <g>
+    <rect x="530" y="140" width="220" height="48" rx="8" fill="#E6F1FB" stroke="#85B7EB" stroke-width="0.5"/>
+    <text x="640" y="158" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" font-weight="500" fill="#0C447C">VALIDATE_ANNOTATION</text>
+    <text x="640" y="175" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11" fill="#185FA5">validation</text>
+  </g>
+
+  <path d="M160 188 L160 228" fill="none" stroke="#5DCAA5" stroke-width="1.5" marker-end="url(#a)"/>
+  <path d="M640 188 L640 228" fill="none" stroke="#5DCAA5" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <g>
+    <rect x="50" y="230" width="220" height="48" rx="8" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="0.5"/>
+    <text x="160" y="248" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" font-weight="500" fill="#085041">FILTER_CLINVAR_LABELS</text>
+    <text x="160" y="265" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11" fill="#0F6E56">label split to BED</text>
+  </g>
+  <g>
+    <rect x="520" y="224" width="240" height="60" rx="8" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="0.5"/>
+    <text x="640" y="242" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11" font-weight="500" fill="#085041">EXTRACT_ANNOTATION_FEATURES</text>
+    <text x="640" y="258" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11" fill="#0F6E56">GTF to feature BED</text>
+    <text x="640" y="273" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11" fill="#0F6E56">gene/exon/intron/CDS/UTR</text>
+  </g>
+
+  <path d="M160 278 L160 318" fill="none" stroke="#85B7EB" stroke-width="1.5" marker-end="url(#a)"/>
+  <path d="M640 284 L640 318" fill="none" stroke="#85B7EB" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <g>
+    <rect x="50" y="320" width="220" height="48" rx="8" fill="#E6F1FB" stroke="#85B7EB" stroke-width="0.5"/>
+    <text x="160" y="338" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" font-weight="500" fill="#0C447C">VALIDATE_BED</text>
+    <text x="160" y="355" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11" fill="#185FA5">variant BED, min 4 cols</text>
+  </g>
+  <g>
+    <rect x="530" y="320" width="220" height="48" rx="8" fill="#E6F1FB" stroke="#85B7EB" stroke-width="0.5"/>
+    <text x="640" y="338" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" font-weight="500" fill="#0C447C">VALIDATE_BED</text>
+    <text x="640" y="355" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11" fill="#185FA5">feature BED, min 10 cols</text>
+  </g>
+
+  <path d="M160 368 C 160 420, 260 434, 296 438" fill="none" stroke="#AFA9EC" stroke-width="1.5" marker-end="url(#a)"/>
+  <path d="M640 368 C 640 420, 540 434, 504 438" fill="none" stroke="#AFA9EC" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <g>
+    <rect x="300" y="416" width="200" height="48" rx="8" fill="#EEEDFE" stroke="#AFA9EC" stroke-width="0.5"/>
+    <text x="400" y="434" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13" font-weight="500" fill="#3C3489">INTERSECT</text>
+    <text x="400" y="451" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11" fill="#534AB7">interval operation</text>
+  </g>
+
+  <path d="M400 464 L400 504" fill="none" stroke="#EF9F27" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <g>
+    <rect x="280" y="506" width="240" height="60" rx="8" fill="#FAEEDA" stroke="#EF9F27" stroke-width="0.5"/>
+    <text x="400" y="524" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11" font-weight="500" fill="#633806">FORMAT_CLINVAR_INTERSECTIONS</text>
+    <text x="400" y="540" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11" fill="#854F0B">join feature + variant columns</text>
+    <text x="400" y="555" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11" fill="#854F0B">one row per hit, no collapsing</text>
+  </g>
+
+  <path d="M340 566 L240 606" fill="none" stroke="#EF9F27" stroke-width="1.5" marker-end="url(#a)"/>
+  <path d="M460 566 L560 606" fill="none" stroke="#EF9F27" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <g>
+    <rect x="110" y="608" width="230" height="56" rx="8" fill="#FAEEDA" stroke="#EF9F27" stroke-width="0.5"/>
+    <text x="225" y="626" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" font-weight="500" fill="#633806">SUMMARIZE_ANNOTATIONS</text>
+    <text x="225" y="644" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11" fill="#854F0B">feature_type x clinical label</text>
+  </g>
+  <g>
+    <rect x="455" y="608" width="230" height="56" rx="8" fill="#FAEEDA" stroke="#EF9F27" stroke-width="0.5"/>
+    <text x="570" y="626" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" font-weight="500" fill="#633806">EXPORT_CLINVAR_FORMATS</text>
+    <text x="570" y="644" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11" fill="#854F0B">SQL inserts + UCSC track BED</text>
+  </g>
+</svg>

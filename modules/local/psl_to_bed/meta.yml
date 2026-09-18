@@ -1,0 +1,30 @@
+name: psl_to_bed
+description: Convert PSL alignments to BED format using UCSC kent pslToBed.
+keywords:
+  - psl
+  - bed
+  - ucsc
+  - kent
+  - conversion
+tools:
+  - pslToBed:
+      description: UCSC kent tool that converts PSL to BED (one BED entry per PSL block).
+      homepage: https://hgdownload.soe.ucsc.edu/admin/exe/
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: PSL alignment file.
+      pattern: "*.{psl,pslx}"
+output:
+  - bed:
+      type: file
+      description: BED file with one interval per PSL block.
+      pattern: "*.bed"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

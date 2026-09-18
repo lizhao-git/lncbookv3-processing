@@ -1,0 +1,33 @@
+name: bed_to_gtf
+description: Convert a BED file (BED3-BED6+) to GTF format using Python stdlib.
+keywords:
+  - bed
+  - gtf
+  - annotation
+  - conversion
+tools:
+  - bed_to_gtf:
+      description: |
+        Python script that converts each BED interval into a GTF feature
+        line (default type: exon). The BED name column is used as both
+        gene_id and transcript_id. Start coordinate is converted from
+        0-based (BED) to 1-based (GTF).
+      homepage: https://github.com/lncbookv3-processing
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: BED file (>=3 tab-delimited columns).
+      pattern: "*.bed"
+output:
+  - gtf:
+      type: file
+      description: GTF annotation file.
+      pattern: "*.gtf"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

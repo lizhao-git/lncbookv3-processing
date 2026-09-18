@@ -1,0 +1,31 @@
+name: gene_pred_to_bed
+description: Convert UCSC genePred to BED format using kent genePredToBed.
+keywords:
+  - genepred
+  - bed
+  - refflat
+  - ucsc
+  - kent
+  - conversion
+tools:
+  - genePredToBed:
+      description: UCSC kent tool that converts genePred/refFlat to BED, one interval per exon.
+      homepage: https://hgdownload.soe.ucsc.edu/admin/exe/
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: genePred or refFlat file.
+      pattern: "*.{gp,gp.txt,refFlat,refflat}"
+output:
+  - bed:
+      type: file
+      description: BED file with one interval per exon.
+      pattern: "*.bed"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

@@ -1,0 +1,30 @@
+name: psl_to_chain
+description: Convert PSL alignments to UCSC chain format using kent pslToChain.
+keywords:
+  - psl
+  - chain
+  - ucsc
+  - kent
+  - conversion
+tools:
+  - pslToChain:
+      description: UCSC kent tool that converts PSL alignment records to chain format.
+      homepage: https://hgdownload.soe.ucsc.edu/admin/exe/
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: PSL alignment file.
+      pattern: "*.{psl,pslx}"
+output:
+  - chain:
+      type: file
+      description: UCSC chain file.
+      pattern: "*.chain"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

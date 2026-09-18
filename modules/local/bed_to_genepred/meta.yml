@@ -1,0 +1,30 @@
+name: bed_to_genepred
+description: Convert BED to UCSC genePred format using kent bedToGenePred.
+keywords:
+  - bed
+  - genepred
+  - ucsc
+  - kent
+  - conversion
+tools:
+  - bedToGenePred:
+      description: UCSC kent tool that converts BED12 (BED with 12 columns) to genePred format.
+      homepage: https://hgdownload.soe.ucsc.edu/admin/exe/
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: BED12 file (with block definitions in columns 10-12).
+      pattern: "*.bed"
+output:
+  - genepred:
+      type: file
+      description: genePred file.
+      pattern: "*.gp"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

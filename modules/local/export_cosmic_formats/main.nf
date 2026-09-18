@@ -8,16 +8,17 @@ process EXPORT_COSMIC_FORMATS {
 
     input:
     tuple val(meta), path(annotations)
+    val output_prefix
 
     output:
-    tuple val(meta), path('gtf_cosmic_annotations.sql'), emit: sql
-    tuple val(meta), path('gtf_cosmic_ucsc.bed'), emit: ucsc
+    tuple val(meta), path("${output_prefix}_annotations.sql"), emit: sql
+    tuple val(meta), path("${output_prefix}_ucsc.bed"), emit: ucsc
 
     script:
     """
     python3 ${projectDir}/scripts/variant_pipeline/export_cosmic_annotation_formats.py \
         --input-tsv ${annotations} \
-        --output-sql gtf_cosmic_annotations.sql \
-        --output-ucsc-bed gtf_cosmic_ucsc.bed
+        --output-sql ${output_prefix}_annotations.sql \
+        --output-ucsc-bed ${output_prefix}_ucsc.bed
     """
 }

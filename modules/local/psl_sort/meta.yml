@@ -1,0 +1,34 @@
+name: psl_sort
+description: Merge and sort PSL alignment files using UCSC kent pslSort.
+keywords:
+  - psl
+  - sort
+  - merge
+  - ucsc
+  - kent
+tools:
+  - pslSort:
+      description: |
+        UCSC kent tool that merges and sorts PSL files in two passes:
+        first into temporary files in a temp directory, then merged into the output.
+        The dirs option defaults to 'dirs' (both passes); 'dirs1' runs only the
+        first pass, 'dirs2' only the second. Use 'g2g' for genome-to-genome sort.
+      homepage: https://hgdownload.soe.ucsc.edu/admin/exe/
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: PSL alignment file (or multiple files via channel flattening).
+      pattern: "*.{psl,pslx}"
+output:
+  - psl:
+      type: file
+      description: Sorted and merged PSL file.
+      pattern: "*.psl"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

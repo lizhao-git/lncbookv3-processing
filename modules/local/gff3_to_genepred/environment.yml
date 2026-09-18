@@ -1,0 +1,6 @@
+name: lncbookv3-ucsc-gff3togenepred
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - ucsc-gff3togenepred

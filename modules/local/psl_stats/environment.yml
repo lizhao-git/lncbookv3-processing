@@ -1,0 +1,6 @@
+name: lncbookv3-ucsc-pslstats
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - ucsc-pslstats

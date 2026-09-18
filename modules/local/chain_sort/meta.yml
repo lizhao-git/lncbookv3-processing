@@ -1,0 +1,29 @@
+name: chain_sort
+description: Sort a UCSC chain file by target coordinates using kent chainSort.
+keywords:
+  - chain
+  - sort
+  - ucsc
+  - kent
+tools:
+  - chainSort:
+      description: UCSC kent tool that sorts chain records by target chromosome and start.
+      homepage: https://hgdownload.soe.ucsc.edu/admin/exe/
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: UCSC chain file.
+      pattern: "*.chain"
+output:
+  - chain:
+      type: file
+      description: Sorted chain file.
+      pattern: "*.chain"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

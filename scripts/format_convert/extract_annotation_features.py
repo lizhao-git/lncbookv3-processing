@@ -9,7 +9,11 @@ def main():
     parser.add_argument("--input-annotation", required=True)
     parser.add_argument("--output-bed", required=True)
     parser.add_argument("--format", choices=["auto", "gtf", "gff3"], default="auto")
-    parser.add_argument("--feature", nargs="+", choices=["gene", "transcript", "exon", "intron"])
+    # action="extend" accumulates every occurrence, so both
+    # "--feature gene exon" and "--feature gene --feature exon" work.
+    parser.add_argument("--feature", nargs="+", action="extend",
+                        choices=["gene", "transcript", "exon", "intron", "cds", "utr", "utr5", "utr3"],
+                        help="Feature types to emit. 'utr' expands to both 'utr5' and 'utr3'.")
     args = parser.parse_args()
     extract_features(args.input_annotation, args.output_bed, fmt=args.format, features=args.feature)
 

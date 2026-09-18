@@ -13,7 +13,7 @@ workflow ANNOTATION_INTERVALS {
     main:
     VALIDATE_ANNOTATION(annotation_ch, format, 'validated_annotation.txt', 'annotation_validation_report.tsv')
     EXTRACT_ANNOTATION_FEATURES(VALIDATE_ANNOTATION.out.validated_annotation, format, features, 'annotation_features.bed')
-    VALIDATE_BED(EXTRACT_ANNOTATION_FEATURES.out.features_bed, 10, 'annotation_features.bed', 'annotation_features_bed_validation_report.tsv')
+    VALIDATE_BED(EXTRACT_ANNOTATION_FEATURES.out.features_bed, 10, 'validated_annotation_features.bed', 'annotation_features_bed_validation_report.tsv')
 
     emit:
     validated_annotation = VALIDATE_ANNOTATION.out.validated_annotation

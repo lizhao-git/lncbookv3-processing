@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ClinVar variant annotation debug report</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+         margin: 2rem auto; max-width: 60rem; padding: 0 1rem; line-height: 1.5; }
+  h1 { border-bottom: 2px solid #8884; padding-bottom: .3rem; }
+  h2 { border-bottom: 1px solid #8884; padding-bottom: .2rem; margin-top: 2rem; }
+  h3 { margin-bottom: .3rem; }
+  code { background: #88888822; padding: .05rem .3rem; border-radius: 3px; }
+  table { border-collapse: collapse; margin: .6rem 0 1.2rem; width: 100%; font-size: .92rem; }
+  th, td { border: 1px solid #8885; padding: .3rem .55rem; text-align: left; vertical-align: top;
+           word-break: break-word; }
+  th { background: #88888822; }
+  tr:hover td { background: #88888811; }
+  td.err { color: #b30000; font-weight: 600; }
+  td.warn { color: #9a6700; }
+  .badge { display: inline-block; padding: .05rem .5rem; border-radius: 999px;
+           font-size: .78rem; font-weight: 700; letter-spacing: .03em; }
+  .badge.ok { background: #1a7f37; color: #fff; }
+  .badge.warn { background: #9a6700; color: #fff; }
+  .badge.fail { background: #b30000; color: #fff; }
+  .badge.info { background: #57606a; color: #fff; }
+  .summary { color: #57606a; }
+</style>
+</head>
+<body>
+<h1>ClinVar variant annotation debug report</h1>
+<p class="summary">6 steps, 1 failing, 1 with warnings</p>
+<h2>Overview</h2>
+<table>
+<tr><th>#</th><th>step</th><th>records</th><th>errors</th><th>warnings</th><th>status</th></tr>
+<tr><td>1</td><td><code>5_features_bed_report.tsv</code></td><td>7</td><td>1</td><td>0</td><td><span class="badge fail">FAIL</span></td></tr><tr><td>2</td><td><code>4_variant_bed_report.tsv</code></td><td>3214</td><td>0</td><td>1</td><td><span class="badge warn">WARN</span></td></tr><tr><td>3</td><td><code>1_annotation_validation_report.tsv</code></td><td>1471438</td><td>0</td><td>0</td><td><span class="badge ok">OK</span></td></tr><tr><td>4</td><td><code>2_clinvar_validation_report.tsv</code></td><td>8842</td><td>0</td><td>0</td><td><span class="badge ok">OK</span></td></tr><tr><td>5</td><td><code>3_clinvar_filter_report.tsv</code></td><td>-</td><td>0</td><td>0</td><td><span class="badge ok">OK</span></td></tr><tr><td>6</td><td><code>6_clinvar_summary.tsv</code></td><td>8</td><td>-</td><td>-</td><td><span class="badge ok">OK</span></td></tr>
+</table>
+<h2>Errors &amp; Warnings</h2>
+<h3><code>5_features_bed_report.tsv</code></h3><ul><li><strong>error_count</strong>: <code>1</code></li><li><strong>errors</strong>: <code>line 4: BED end must be &gt; start</code></li></ul><h3><code>4_variant_bed_report.tsv</code></h3><ul><li><strong>warning_count</strong>: <code>1</code></li><li><strong>warnings</strong>: <code>line 2170: BED has extra columns but fewer than BED6 columns</code></li></ul>
+<h2>Step details</h2>
+<h2><code>5_features_bed_report.tsv</code> <span class="badge fail">FAIL</span></h2><table class="kv"><tr><th>metric</th><th>value</th></tr><tr><td>records</td><td>7</td></tr><tr><td>chrom_count</td><td>1</td></tr><tr><td>error_count</td><td class="err">1</td></tr><tr><td>warning_count</td><td>0</td></tr><tr><td>errors</td><td class="err">line 4: BED end must be &gt; start</td></tr></table><h2><code>4_variant_bed_report.tsv</code> <span class="badge warn">WARN</span></h2><table class="kv"><tr><th>metric</th><th>value</th></tr><tr><td>records</td><td>3214</td></tr><tr><td>chrom_count</td><td>1</td></tr><tr><td>error_count</td><td>0</td></tr><tr><td>warning_count</td><td class="warn">1</td></tr><tr><td>warnings</td><td class="warn">line 2170: BED has extra columns but fewer than BED6 columns</td></tr></table><h2><code>1_annotation_validation_report.tsv</code> <span class="badge ok">OK</span></h2><table class="kv"><tr><th>metric</th><th>value</th></tr><tr><td>format</td><td>gtf</td></tr><tr><td>input_compression</td><td>plain</td></tr><tr><td>parsed_records</td><td>1471438</td></tr><tr><td>feature_exon</td><td>1471438</td></tr><tr><td>feature_gene</td><td>214300</td></tr><tr><td>feature_transcript</td><td>506089</td></tr><tr><td>feature_CDS</td><td>5405</td></tr><tr><td>feature_5UTR</td><td>3120</td></tr><tr><td>feature_3UTR</td><td>4011</td></tr><tr><td>error_count</td><td>0</td></tr><tr><td>warning_count</td><td>0</td></tr></table><h2><code>2_clinvar_validation_report.tsv</code> <span class="badge ok">OK</span></h2><table class="kv"><tr><th>metric</th><th>value</th></tr><tr><td>records</td><td>8842</td></tr><tr><td>chrom_count</td><td>1</td></tr><tr><td>error_count</td><td>0</td></tr><tr><td>warning_count</td><td>0</td></tr></table><h2><code>3_clinvar_filter_report.tsv</code> <span class="badge ok">OK</span></h2><table class="kv"><tr><th>metric</th><th>value</th></tr><tr><td>kept_variants</td><td>3214</td></tr><tr><td>label_Pathogenic</td><td>1870</td></tr><tr><td>label_Benign</td><td>1042</td></tr><tr><td>label_Risk_factor</td><td>302</td></tr></table><h2><code>6_clinvar_summary.tsv</code> <span class="badge ok">OK</span></h2><table class="data"><tr><th>feature_type</th><th>label</th><th>count</th></tr><tr><td>exon</td><td>ALL</td><td>3214</td></tr><tr><td>exon</td><td>Pathogenic</td><td>1870</td></tr><tr><td>exon</td><td>Benign</td><td>1042</td></tr><tr><td>intron</td><td>ALL</td><td>214</td></tr><tr><td>intron</td><td>Pathogenic</td><td>93</td></tr><tr><td>cds</td><td>ALL</td><td>121</td></tr><tr><td>5UTR</td><td>ALL</td><td>41</td></tr><tr><td>3UTR</td><td>ALL</td><td>38</td></tr></table>
+</body>
+</html>

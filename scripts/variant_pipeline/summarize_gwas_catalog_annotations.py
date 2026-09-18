@@ -4,6 +4,8 @@ import csv
 from collections import Counter
 
 LABEL = "Genome-wide significant"
+# Most specific location class first, so the summary reads top-down.
+PREFERRED = ["CDS", "5UTR", "3UTR", "exon", "intron", "gene", "transcript"]
 
 
 def main():
@@ -24,9 +26,12 @@ def main():
             if label:
                 by_feature_label[(feature, label)] += 1
 
+    ordered = [f for f in PREFERRED if f in by_feature]
+    ordered += sorted(f for f in by_feature if f not in PREFERRED)
+
     with open(args.output_summary, "w", encoding="utf-8") as out:
         out.write("feature_type\tlabel\tcount\n")
-        for feature in ["gene", "transcript", "exon", "intron"]:
+        for feature in ordered:
             out.write(f"{feature}\tALL\t{by_feature.get(feature, 0)}\n")
             out.write(f"{feature}\t{LABEL}\t{by_feature_label.get((feature, LABEL), 0)}\n")
 

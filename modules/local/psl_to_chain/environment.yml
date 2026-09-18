@@ -1,0 +1,6 @@
+name: lncbookv3-ucsc-psltochain
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - ucsc-psltochain

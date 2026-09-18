@@ -1,0 +1,36 @@
+name: validate_psl
+description: Validate a PSL alignment file (psLayout header, 21/23 field layout, block accounting, coordinate bounds) with the kent pslCheck binary and copy it through.
+keywords:
+  - lncbookv3
+  - local
+  - psl
+  - blat
+  - validation
+tools:
+  - validate_psl:
+      description: Stdlib structural pass plus the UCSC kent pslCheck binary.
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - psl:
+      type: file
+      description: PSL or psLx alignment file produced by BLAT.
+      pattern: "*.psl"
+  - target_sizes:
+      type: file
+      description: |
+        Optional chrom.sizes file carried in the same tuple. When given, pslCheck
+        also verifies that every target name exists, that its size matches the
+        sizes file and that the target coordinates fall inside it. Pass an empty
+        list in the tuple to skip the check.
+      pattern: "*{.sizes,chrom.sizes}"
+output:
+  - validated_psl:
+      type: file
+      description: The input PSL copied through unchanged.
+  - report:
+      type: file
+      description: metric/value TSV report with error and warning detail.
+authors:
+  - lncbookv3-processing

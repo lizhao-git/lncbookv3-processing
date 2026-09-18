@@ -9,7 +9,8 @@
 #   docker build --target samtools -t lncbookv3-samtools:latest .
 #   docker build --target cerna-predict -t lncbookv3-cerna-predict:latest .
 
-# kent: UCSC kent tools (bigWig/bigBed conversion, liftover, pslMap).
+# kent: UCSC kent tools (bigWig/bigBed conversion, liftover, pslMap/pslCheck,
+# chain/PSL conversion, genePred/GFF3/BED annotation conversion).
 # BEDOPS to-BED conversion modules use the upstream BioContainers BEDOPS image.
 # Based on Ubuntu 24.04 (glibc 2.39): the arm64 kent binaries
 # (linux.aarch64.v492) require GLIBC_2.38, which the bookworm-based
@@ -39,7 +40,7 @@ RUN case "${TARGETARCH:-amd64}" in \
         arm64) base="https://hgdownload.soe.ucsc.edu/admin/exe/linux.aarch64.v492" ;; \
         *) base="https://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64" ;; \
     esac \
-    && for tool in bedToBigBed bedGraphToBigWig bigBedToBed bigWigToBedGraph bigWigToWig bigWigInfo bigBedInfo liftOver pslMap pslToPslx; do \
+    && for tool in bedToBigBed bedGraphToBigWig bigBedToBed bigWigToBedGraph bigWigToWig bigWigInfo bigBedInfo liftOver pslMap pslToPslx pslCheck chainToPsl pslToChain pslToBed pslSort pslReps pslStats chainSort chainFilter chainSwap chainMergeSort genePredToGtf genePredToBed gff3ToGenePred bedToGenePred; do \
         wget -q "${base}/${tool}" -O "/usr/local/bin/${tool}" \
         && chmod +x "/usr/local/bin/${tool}"; \
     done

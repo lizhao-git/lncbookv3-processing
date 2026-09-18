@@ -1,0 +1,29 @@
+name: chain_swap
+description: Swap query and target coordinates in a UCSC chain file using kent chainSwap.
+keywords:
+  - chain
+  - swap
+  - ucsc
+  - kent
+tools:
+  - chainSwap:
+      description: UCSC kent tool that swaps query and target sides of chain records.
+      homepage: https://hgdownload.soe.ucsc.edu/admin/exe/
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: UCSC chain file.
+      pattern: "*.chain"
+output:
+  - chain:
+      type: file
+      description: Chain file with swapped query/target.
+      pattern: "*.chain"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

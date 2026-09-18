@@ -1,0 +1,35 @@
+name: bedmethyl_to_bed
+description: Convert bedMethyl (modkit output) to standard BED6 format.
+keywords:
+  - bedmethyl
+  - bed
+  - modkit
+  - methylation
+  - conversion
+tools:
+  - bedmethyl_to_bed:
+      description: |
+        Python script that strips the methylation-specific columns from a
+        modkit bedMethyl file, producing a standard BED6 file
+        (chrom, start, end, mod_code, score, strand). Optional flags
+        --with-coverage and --with-percent append the coverage and
+        percent-modification columns.
+      homepage: https://github.com/lncbookv3-processing
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: bedMethyl file (modkit output, >=6 tab-delimited columns).
+      pattern: "*.bedMethyl"
+output:
+  - bed:
+      type: file
+      description: Standard BED6 file.
+      pattern: "*.bed"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

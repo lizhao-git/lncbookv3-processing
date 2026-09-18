@@ -1,0 +1,40 @@
+name: bed_to_bedgraph
+description: Convert BED intervals to sorted bedGraph coverage using bedtools genomecov -bg.
+keywords:
+  - bed
+  - bedgraph
+  - coverage
+  - genomecov
+  - bedtools
+  - conversion
+tools:
+  - bedtools:
+      description: |
+        Uses bedtools genomecov with -bg to produce a bedGraph coverage
+        track from BED intervals, then sorts by chromosome and start.
+      homepage: https://bedtools.readthedocs.io
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: BED file (>=3 tab-delimited columns).
+      pattern: "*.bed"
+  - sizes:
+      type: file
+      description: chrom.sizes file (genome chromosome sizes).
+      pattern: "*.sizes"
+  - output_name:
+      type: string
+      description: Output bedGraph file name.
+output:
+  - bedgraph:
+      type: file
+      description: Sorted bedGraph file (4-column coverage).
+      pattern: "*.bedgraph"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

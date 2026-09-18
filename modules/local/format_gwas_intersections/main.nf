@@ -8,12 +8,13 @@ process FORMAT_GWAS_INTERSECTIONS {
 
     input:
     tuple val(meta), path(raw)
+    val output_prefix
 
     output:
-    tuple val(meta), path('gtf_gwas_annotations.tsv'), emit: annotations
+    tuple val(meta), path("${output_prefix}_annotations.tsv"), emit: annotations
 
     script:
     """
-    python3 ${projectDir}/scripts/variant_pipeline/format_gwas_catalog_intersections.py --input-intersections ${raw} --output-tsv gtf_gwas_annotations.tsv
+    python3 ${projectDir}/scripts/variant_pipeline/format_gwas_catalog_intersections.py --input-intersections ${raw} --output-tsv ${output_prefix}_annotations.tsv
     """
 }

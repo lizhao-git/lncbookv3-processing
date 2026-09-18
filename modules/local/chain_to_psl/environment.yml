@@ -1,0 +1,6 @@
+name: lncbookv3-ucsc-chaintopsl
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - ucsc-chaintopsl

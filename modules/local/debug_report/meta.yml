@@ -1,0 +1,30 @@
+name: debug_report
+description: Generate Markdown and HTML debug reports from pipeline step reports, highlighting errors and warnings.
+keywords: [debugging, report, markdown, html, validation]
+input:
+  - meta:
+      type: map
+      description: Groovy Map containing sample information (e.g. [id: 'test']).
+  - reports:
+      type: file
+      description: List of step reports (metric/value TSVs and/or header+rows TSVs), in step order.
+  - md_name:
+      type: val
+      description: Name for the Markdown report.
+  - html_name:
+      type: val
+      description: Name for the HTML report.
+  - report_title:
+      type: val
+      description: Title shown in both reports.
+output:
+  - report_md:
+      type: file
+      description: Markdown debug report (overview table, errors & warnings, per-step details).
+      pattern: "*.md"
+  - report_html:
+      type: file
+      description: Self-contained HTML debug report with status badges and inline CSS.
+      pattern: "*.html"
+authors:
+  - lncbookv3-processing

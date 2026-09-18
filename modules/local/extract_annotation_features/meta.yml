@@ -1,16 +1,46 @@
 name: extract_annotation_features
-description: Extract gene/transcript/exon/intron annotation features into BED-like intervals.
+description: Extract gene/transcript/exon/intron/CDS/UTR annotation features into BED-like intervals.
 keywords:
-  - lncbookv3
-  - local
+  - annotation
+  - gtf
+  - gff3
+  - bed
+  - exon
+  - intron
+  - cds
+  - utr
 tools:
   - extract_annotation_features:
-      description: Local lncbookv3-processing module wrapping project scripts or command line tools.
+      description: |
+        Wraps scripts/format_convert/extract_annotation_features.py. Emits one
+        BED-like row (chrom, start, end, feature_type, feature_id, gene_id,
+        transcript_id, strand, gene_type, transcript_type) per annotation
+        feature. Supported --feature tokens: gene, transcript, exon, intron,
+        cds and utr ('utr' expands to both utr5 and utr3; utr5 / utr3 select a
+        single end). UTR rows come from explicit GENCODE-style UTR /
+        five_prime_utr / three_prime_utr features when present and are
+        otherwise derived from the exon minus CDS layout; transcripts without a
+        CDS have no UTR.
 input:
   - meta:
       type: map
       description: Sample or branch metadata.
+  - annotation:
+      type: file
+      description: GTF or GFF3 annotation file.
+  - format:
+      type: string
+      description: Annotation format (auto, gtf or gff3).
+  - features:
+      type: list
+      description: Feature tokens to emit (gene, transcript, exon, intron, cds, utr, utr5, utr3).
+  - output_name:
+      type: string
+      description: Output BED file name.
 output:
+  - features_bed:
+      type: file
+      description: BED-like feature table (10 columns).
   - meta:
       type: map
       description: Sample or branch metadata.

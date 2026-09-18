@@ -1,0 +1,8 @@
+---
+name: lncbookv3-bedtools-genomecov
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::bedtools=2.31.1
+  - coreutils

@@ -1,0 +1,44 @@
+name: psl_reps
+description: Select best alignments per query from a sorted PSL file using UCSC kent pslReps.
+keywords:
+  - psl
+  - reps
+  - best
+  - ucsc
+  - kent
+tools:
+  - pslReps:
+      description: |
+        UCSC kent tool that processes a sorted PSL file, keeping only the best
+        alignment per query. Produces two outputs: a PSL file with the selected
+        alignments and a PSR report with per-query statistics.
+        Input must be sorted by query (use psl_sort first).
+      homepage: https://hgdownload.soe.ucsc.edu/admin/exe/
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: Sorted PSL alignment file.
+      pattern: "*.{psl,pslx}"
+  - output_name:
+      type: string
+      description: Output PSL filename for best alignments.
+  - report_name:
+      type: string
+      description: Output PSR report filename.
+output:
+  - psl:
+      type: file
+      description: PSL file with best alignment per query.
+      pattern: "*.psl"
+  - report:
+      type: file
+      description: Per-query alignment report.
+      pattern: "*.psr"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

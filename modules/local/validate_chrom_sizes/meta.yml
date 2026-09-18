@@ -1,0 +1,28 @@
+name: validate_chrom_sizes
+description: Validate a two-column chrom.sizes file (tab separation, positive integer sizes, unique names, canonical chromosome order) and copy it through.
+keywords:
+  - lncbookv3
+  - local
+  - chrom.sizes
+  - ucsc
+  - tracks
+tools:
+  - validate_chrom_sizes:
+      description: Stdlib structural pass for UCSC chrom.sizes files.
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - sizes:
+      type: file
+      description: Two-column chromosome name and length file (samtools faidx cut -f1,2).
+      pattern: "*.{sizes,chrom.sizes,chromsize,chrom.sizes.txt}"
+output:
+  - validated_sizes:
+      type: file
+      description: The input chrom.sizes copied through unchanged.
+  - report:
+      type: file
+      description: metric/value TSV report with error and warning detail.
+authors:
+  - lncbookv3-processing

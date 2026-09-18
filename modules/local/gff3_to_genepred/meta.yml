@@ -1,0 +1,30 @@
+name: gff3_to_genepred
+description: Convert GFF3 annotations to UCSC genePred format using kent gff3ToGenePred.
+keywords:
+  - gff3
+  - genepred
+  - ucsc
+  - kent
+  - conversion
+tools:
+  - gff3ToGenePred:
+      description: UCSC kent tool that converts GFF3 to genePred format.
+      homepage: https://hgdownload.soe.ucsc.edu/admin/exe/
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: GFF3 annotation file.
+      pattern: "*.{gff3,gff3.gz}"
+output:
+  - genepred:
+      type: file
+      description: genePred file.
+      pattern: "*.gp"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

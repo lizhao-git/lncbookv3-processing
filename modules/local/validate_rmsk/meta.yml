@@ -1,0 +1,28 @@
+name: validate_rmsk
+description: Validate a RepeatMasker .out/.cat file (title header, 14/15 field records, percentage columns, coordinate and (left) accounting, -a alignment lines) and copy it through.
+keywords:
+  - lncbookv3
+  - local
+  - repeatmasker
+  - rmsk
+  - repeats
+tools:
+  - validate_rmsk:
+      description: Stdlib structural pass for RepeatMasker .out and .cat files.
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - rmsk:
+      type: file
+      description: RepeatMasker .out annotation file (plain, with -a alignment lines, or .cat).
+      pattern: "*.{out,cat}"
+output:
+  - validated_rmsk:
+      type: file
+      description: The input file copied through unchanged.
+  - report:
+      type: file
+      description: metric/value TSV report with error and warning detail.
+authors:
+  - lncbookv3-processing

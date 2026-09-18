@@ -1,3 +1,4 @@
+import os
 from collections import Counter
 
 from .io import open_text
@@ -51,6 +52,14 @@ def validate_bed(input_path: str, output_path: str, report_path: str, min_column
     if errors:
         raise SystemExit("BED validation failed. See report for details.")
 
-    with open_text(input_path, preferred_exts=(".bed",)) as (in_fh, _), open(output_path, "w", encoding="utf-8") as out_fh:
+    # Copy the validated BED through. Writing to a staged temp file and then
+    # atomically replacing the target keeps the input intact when input_path and
+    # output_path resolve to the same file: Nextflow materialises task inputs as
+    # symlinks, so opening the output with "w" would otherwise follow the link
+    # and truncate the upstream task's own output before it is read.
+    tmp_path = f"{output_path}.tmp"
+    with open_text(input_path, preferred_exts=(".bed",)) as (in_fh, _), \
+            open(tmp_path, "w", encoding="utf-8") as out_fh:
         for raw in in_fh:
             out_fh.write(raw)
+    os.replace(tmp_path, output_path)

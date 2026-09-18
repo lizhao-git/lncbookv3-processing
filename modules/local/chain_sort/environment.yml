@@ -1,0 +1,6 @@
+name: lncbookv3-ucsc-chainsort
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - ucsc-chainsort

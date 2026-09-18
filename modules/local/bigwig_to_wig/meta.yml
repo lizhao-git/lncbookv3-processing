@@ -1,0 +1,33 @@
+name: bigwig_to_wig
+description: Convert bigWig to WIG/bedGraph format using UCSC kent bigWigToWig.
+keywords:
+  - bigwig
+  - wig
+  - bedgraph
+  - ucsc
+  - kent
+  - conversion
+tools:
+  - bigWigToWig:
+      description: |
+        UCSC kent tool that converts bigWig to text (WIG or bedGraph depending
+        on the underlying data type). This is the reverse of wigToBigWig/bedGraphToBigWig.
+      homepage: https://hgdownload.soe.ucsc.edu/admin/exe/
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: bigWig file.
+      pattern: "*.bigWig"
+output:
+  - wig:
+      type: file
+      description: WIG or bedGraph text file.
+      pattern: "*.{wig,bedGraph}"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

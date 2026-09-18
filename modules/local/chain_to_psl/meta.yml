@@ -1,0 +1,41 @@
+name: chain_to_psl
+description: Convert UCSC chain alignments to PSL using kent chainToPsl.
+keywords:
+  - chain
+  - psl
+  - ucsc
+  - kent
+  - conversion
+tools:
+  - chainToPsl:
+      description: |
+        UCSC kent tool that converts chain format to PSL.
+        Requires target and query sequence files (FASTA, 2bit, or nib) to compute
+        match/mismatch counts. tSizes and qSizes arguments are unused (pass /dev/null).
+      homepage: https://hgdownload.soe.ucsc.edu/admin/exe/
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - chain_file:
+      type: file
+      description: UCSC chain alignment file.
+      pattern: "*.chain"
+  - target_seqs:
+      type: file
+      description: Target sequences (FASTA, 2bit, or nib) for computing match/mismatch counts.
+      pattern: "*.{fa,fasta,2bit,nib}"
+  - query_seqs:
+      type: file
+      description: Query sequences (FASTA, 2bit, or nib) for computing match/mismatch counts.
+      pattern: "*.{fa,fasta,2bit,nib}"
+output:
+  - psl:
+      type: file
+      description: PSL alignment file.
+      pattern: "*.psl"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

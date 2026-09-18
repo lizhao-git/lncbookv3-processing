@@ -1,0 +1,31 @@
+name: bed_to_bed12
+description: Convert a BED3-BED6 file to BED12 format (single-exon expansion).
+keywords:
+  - bed
+  - bed12
+  - conversion
+tools:
+  - bed_to_bed12:
+      description: |
+        Python script that expands each BED3-BED6 interval into a BED12
+        single-exon record, filling thickStart/thickEnd, blockCount=1,
+        blockSizes and blockStarts.
+      homepage: https://github.com/lncbookv3-processing
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: BED file (>=3 tab-delimited columns).
+      pattern: "*.bed"
+output:
+  - bed12:
+      type: file
+      description: BED12 file (12 tab-delimited columns).
+      pattern: "*.bed"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

@@ -1,0 +1,6 @@
+name: lncbookv3-ucsc-pslsort
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - ucsc-pslsort

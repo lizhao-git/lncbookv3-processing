@@ -1,0 +1,6 @@
+name: lncbookv3-ucsc-psltobed
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - ucsc-psltobed

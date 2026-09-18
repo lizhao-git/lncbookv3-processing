@@ -26,26 +26,38 @@ workflow LNCBOOKV3_PROCESSING {
 
     if (params.run_clinvar && params.clinvar_vcf) {
         clinvar_ch = Channel.fromPath(params.clinvar_vcf, checkIfExists: true).map { file -> tuple([id: file.baseName], file) }
-        CLINVAR(clinvar_ch, REFERENCE.out.features)
+        // --annotation accepts gtf/gff3/bed (auto-detected); falls back to --gtf
+        def annotation_path = params.annotation ?: params.gtf
+        annotation_ch = Channel.fromPath(annotation_path, checkIfExists: true).map { file -> tuple([id: file.baseName], file) }
+        CLINVAR(clinvar_ch, annotation_ch)
         clinvar_annotations_ch = CLINVAR.out.annotations
     }
 
     if (params.run_cosmic && params.cosmic_tsv) {
         cosmic_ch = Channel.fromPath(params.cosmic_tsv, checkIfExists: true).map { file -> tuple([id: file.baseName], file) }
-        COSMIC(cosmic_ch, REFERENCE.out.features)
+        // --annotation accepts gtf/gff3/bed (auto-detected); falls back to --gtf
+        def cosmic_annotation_path = params.annotation ?: params.gtf
+        cosmic_annotation_ch = Channel.fromPath(cosmic_annotation_path, checkIfExists: true).map { file -> tuple([id: file.baseName], file) }
+        COSMIC(cosmic_ch, cosmic_annotation_ch)
         cosmic_annotations_ch = COSMIC.out.annotations
     }
 
     if (params.run_gwas_catalog && params.gwas_tsv) {
         gwas_ch = Channel.fromPath(params.gwas_tsv, checkIfExists: true).map { file -> tuple([id: file.baseName], file) }
-        GWAS(gwas_ch, REFERENCE.out.features)
+        // --annotation accepts gtf/gff3/bed (auto-detected); falls back to --gtf
+        def gwas_annotation_path = params.annotation ?: params.gtf
+        gwas_annotation_ch = Channel.fromPath(gwas_annotation_path, checkIfExists: true).map { file -> tuple([id: file.baseName], file) }
+        GWAS(gwas_ch, gwas_annotation_ch)
         gwas_annotations_ch = GWAS.out.annotations
     }
 
     if (params.run_smprot && params.smprot_tsv) {
         smprot_files = params.smprot_tsv instanceof List ? params.smprot_tsv.collect { file(it) } : [file(params.smprot_tsv)]
         smprot_ch = Channel.of(tuple([id: 'smprot'], smprot_files))
-        SMPROT(smprot_ch, REFERENCE.out.features)
+        // --annotation accepts gtf/gff3/bed (auto-detected); falls back to --gtf
+        def smprot_annotation_path = params.annotation ?: params.gtf
+        smprot_annotation_ch = Channel.fromPath(smprot_annotation_path, checkIfExists: true).map { file -> tuple([id: file.baseName], file) }
+        SMPROT(smprot_ch, smprot_annotation_ch)
         smprot_annotations_ch = SMPROT.out.annotations
     }
 

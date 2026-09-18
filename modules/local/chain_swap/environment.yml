@@ -1,0 +1,6 @@
+name: lncbookv3-ucsc-chainswap
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - ucsc-chainswap

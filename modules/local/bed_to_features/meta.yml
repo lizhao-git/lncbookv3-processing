@@ -1,0 +1,28 @@
+name: bed_to_features
+description: Normalize an arbitrary BED file into the 10-column feature-interval schema used by the annotation pipelines.
+keywords: [bed, features, normalization, annotation]
+input:
+  - meta:
+      type: map
+      description: Groovy Map containing sample information (e.g. [id: 'test']).
+  - bed:
+      type: file
+      description: Input BED file (BED3-BED12, optionally gzipped).
+      pattern: "*.{bed,bed.gz}"
+  - output_name:
+      type: val
+      description: Name for the normalized feature-interval BED.
+  - report_name:
+      type: val
+      description: Name for the metric/value validation report.
+output:
+  - features_bed:
+      type: file
+      description: Normalized 10-column feature-interval BED (chrom start end feature_type feature_id gene_id transcript_id strand gene_type transcript_type).
+      pattern: "*.bed"
+  - report:
+      type: file
+      description: Metric/value report with row counts and per-type distribution.
+      pattern: "*.tsv"
+authors:
+  - lncbookv3-processing

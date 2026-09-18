@@ -10,8 +10,8 @@ workflow REFERENCE {
 
     main:
     VALIDATE_ANNOTATION(gtf_ch, 'gtf', 'validated.gtf', 'gtf_validation_report.tsv')
-    EXTRACT_ANNOTATION_FEATURES(VALIDATE_ANNOTATION.out.validated_annotation, 'gtf', ['gene','transcript','exon','intron'], 'gtf_features.bed')
-    VALIDATE_BED(EXTRACT_ANNOTATION_FEATURES.out.features_bed, 10, 'gtf_features.bed', 'gtf_features_validation_report.tsv')
+    EXTRACT_ANNOTATION_FEATURES(VALIDATE_ANNOTATION.out.validated_annotation, 'gtf', ['gene','transcript','exon','intron','cds','utr'], 'gtf_features.bed')
+    VALIDATE_BED(EXTRACT_ANNOTATION_FEATURES.out.features_bed, 10, 'validated_gtf_features.bed', 'gtf_features_validation_report.tsv')
 
     emit:
     validated_gtf = VALIDATE_ANNOTATION.out.validated_annotation

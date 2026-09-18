@@ -1,0 +1,40 @@
+name: gene_pred_to_gtf
+description: Convert UCSC genePred to GTF format using kent genePredToGtf.
+keywords:
+  - genepred
+  - gtf
+  - refflat
+  - ucsc
+  - kent
+  - conversion
+tools:
+  - genePredToGtf:
+      description: UCSC kent tool that converts genePred/refFlat to GTF format.
+      homepage: https://hgdownload.soe.ucsc.edu/admin/exe/
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: genePred or refFlat file.
+      pattern: "*.{gp,gp.txt,refFlat,refflat}"
+  - output_name:
+      type: string
+      description: Output GTF filename.
+  - source:
+      type: string
+      description: |
+        Database name passed to genePredToGtf. Use 'file' (default) to skip
+        MySQL database lookup and use gene names from the genePred file directly.
+        Any other value is treated as a UCSC database name and requires ~/.hg.conf.
+output:
+  - gtf:
+      type: file
+      description: GTF annotation file.
+      pattern: "*.gtf"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing

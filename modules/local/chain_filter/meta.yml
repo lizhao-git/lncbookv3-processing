@@ -1,0 +1,34 @@
+name: chain_filter
+description: Filter UCSC chain records by score, coordinates, strand, or chromosome using kent chainFilter.
+keywords:
+  - chain
+  - filter
+  - ucsc
+  - kent
+tools:
+  - chainFilter:
+      description: |
+        UCSC kent tool that filters chain records. Output goes to stdout.
+        Options: -minScore=N, -maxScore=N, -q=chr1,chr2, -t=chr1,chr2,
+        -notQ=, -notT=, -id=N, -qStartMin=N, -qStartMax=N, -qEndMin=N,
+        -qEndMax=N, -tStartMin=N, -tStartMax=N, -tEndMin=N, -tEndMax=N,
+        -strand=+/-, -zeroGap, -minGapless=N, -qMinGap=N, -tMinGap=N, etc.
+      homepage: https://hgdownload.soe.ucsc.edu/admin/exe/
+input:
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+  - input_file:
+      type: file
+      description: UCSC chain file.
+      pattern: "*.chain"
+output:
+  - chain:
+      type: file
+      description: Filtered chain file.
+      pattern: "*.chain"
+  - meta:
+      type: map
+      description: Sample or branch metadata.
+authors:
+  - lncbookv3-processing
