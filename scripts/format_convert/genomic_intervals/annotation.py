@@ -26,6 +26,8 @@ def detect_annotation_format(path: str, explicit_format: str = "auto") -> str:
     if explicit_format != "auto":
         return explicit_format
     lower = path.lower()
+    if lower.endswith(".gz"):
+        lower = lower[:-3]
     if lower.endswith((".gff", ".gff3")):
         return "gff3"
     return "gtf"

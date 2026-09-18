@@ -13,10 +13,24 @@
 """
 
 import argparse
+import gzip
 import os
 import re
 
 _COMP = str.maketrans("ACGTNacgtn", "TGCANtgcan")
+
+
+def open_text_auto(path):
+    """Open a text file, transparently decompressing gzip input.
+
+    Compression is detected from the gzip magic bytes so that plain and
+    ``*.gz`` annotation files are both accepted.
+    """
+    with open(path, "rb") as probe:
+        is_gzip = probe.read(2) == b"\x1f\x8b"
+    if is_gzip:
+        return gzip.open(path, "rt", encoding="utf-8", errors="replace")
+    return open(path, "r", encoding="utf-8", errors="replace")
 
 
 def revcomp(seq):
@@ -99,7 +113,7 @@ def fetch_seq(fh, fai, chrom, start_0, end_0):
 
 def gtf_to_transcripts(gtf, genome_fa, out_fa):
     tx_exons = {}
-    with open(gtf) as fh:
+    with open_text_auto(gtf) as fh:
         for raw in fh:
             line = raw.rstrip("\n")
             if not line or line.startswith("#"):
