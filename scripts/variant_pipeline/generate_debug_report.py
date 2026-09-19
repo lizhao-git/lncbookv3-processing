@@ -29,21 +29,37 @@ def parse_tsv(path: str) -> dict:
     everything else is treated as a generic table.
     """
     with open(path, "r", encoding="utf-8", errors="replace") as fh:
-        rows = [line.rstrip("\n").split("\t") for line in fh if line.strip()]
+        first = None
+        for line in fh:
+            if line.strip():
+                first = line.rstrip("\n").split("\t")
+                break
+        if first is None:
+            return {"kind": "table", "header": [], "rows": [], "row_count": 0}
 
-    if not rows:
-        return {"kind": "table", "header": [], "rows": []}
+        if first[:2] == ["metric", "value"] and len(first) == 2:
+            metrics = []
+            for line in fh:
+                if not line.strip():
+                    continue
+                row = line.rstrip("\n").split("\t")
+                if len(row) >= 2:
+                    metrics.append((row[0], "\t".join(row[1:])))
+                else:
+                    metrics.append((row[0], ""))
+            return {"kind": "metric", "metrics": metrics}
 
-    if rows[0][:2] == ["metric", "value"] and len(rows[0]) == 2:
-        metrics = []
-        for row in rows[1:]:
-            if len(row) >= 2:
-                metrics.append((row[0], "\t".join(row[1:])))
-            else:
-                metrics.append((row[0], ""))
-        return {"kind": "metric", "metrics": metrics}
-
-    return {"kind": "table", "header": rows[0], "rows": rows[1:]}
+        # Generic tables (e.g. annotation tables) can hold millions of rows:
+        # keep only the first MAX_TABLE_ROWS for display and count the rest.
+        rows = []
+        row_count = 0
+        for line in fh:
+            if not line.strip():
+                continue
+            row_count += 1
+            if len(rows) < MAX_TABLE_ROWS:
+                rows.append(line.rstrip("\n").split("\t"))
+        return {"kind": "table", "header": first, "rows": rows, "row_count": row_count}
 
 
 def issue_rows(data: dict) -> list[tuple[str, str]]:
@@ -74,7 +90,7 @@ def step_records(data: dict) -> str:
                 if mkey == key:
                     return value
         return "-"
-    return str(len(data["rows"]))
+    return str(data["row_count"])
 
 
 def md_escape(cell: str) -> str:
@@ -122,7 +138,7 @@ def render_markdown(title: str, steps: list[tuple[str, dict]]) -> str:
         else:
             header = data["header"]
             rows = data["rows"]
-            truncated = len(rows) > MAX_TABLE_ROWS
+            truncated = data["row_count"] > MAX_TABLE_ROWS
             shown = rows[:MAX_TABLE_ROWS]
             if header:
                 lines += ["| " + " | ".join(md_escape(c) for c in header) + " |",
@@ -132,7 +148,7 @@ def render_markdown(title: str, steps: list[tuple[str, dict]]) -> str:
                     lines.append("| " + " | ".join(md_escape(c) for c in padded[: len(header)]) + " |")
             if truncated:
                 lines.append("")
-                lines.append(f"_... {len(rows) - MAX_TABLE_ROWS} more rows omitted._")
+                lines.append(f"_... {data['row_count'] - MAX_TABLE_ROWS} more rows omitted._")
         lines.append("")
 
     return "\n".join(lines) + "\n"
@@ -172,8 +188,8 @@ def render_html(title: str, steps: list[tuple[str, dict]]) -> str:
             for row in shown
         )
         table = f'<table class="data">{thead}{body}</table>'
-        if len(rows) > MAX_TABLE_ROWS:
-            table += f"<p><em>... {len(rows) - MAX_TABLE_ROWS} more rows omitted.</em></p>"
+        if data["row_count"] > MAX_TABLE_ROWS:
+            table += f"<p><em>... {data['row_count'] - MAX_TABLE_ROWS} more rows omitted.</em></p>"
         return table
 
     # ---- overview ----

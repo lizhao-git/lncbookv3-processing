@@ -49,11 +49,16 @@ CANONICAL_TYPES = {
 
 def normalize_bed(input_path: str, output_path: str, report_path: str, feature_type: str | None = None):
     errors = []
-    rows = []
     type_counter = Counter()
     records = 0
 
-    with open_text(input_path, preferred_exts=(".bed",)) as (fh, _compression):
+    # Rows are streamed to a temporary file while scanning so memory stays
+    # constant for large BED inputs; the temp file is renamed to the output
+    # path only after validation succeeds.
+    tmp_path = f"{output_path}.tmp"
+    with open_text(input_path, preferred_exts=(".bed",)) as (fh, _compression), open(
+        tmp_path, "w", encoding="utf-8"
+    ) as out_fh:
         for line_no, raw in enumerate(fh, start=1):
             line = raw.rstrip("\n")
             if not line or line.startswith("#") or line.startswith("track ") or line.startswith("browser "):
@@ -89,7 +94,9 @@ def normalize_bed(input_path: str, output_path: str, report_path: str, feature_t
                 fid = f"{chrom}:{start_i + 1}-{end_i}"
 
             type_counter[ftype] += 1
-            rows.append([chrom, str(start_i), str(end_i), ftype, fid, "NA", "NA", strand, "NA", "NA"])
+            out_fh.write(
+                "\t".join([chrom, str(start_i), str(end_i), ftype, fid, "NA", "NA", strand, "NA", "NA"]) + "\n"
+            )
 
     with open(report_path, "w", encoding="utf-8") as rep:
         rep.write("metric\tvalue\n")
@@ -101,12 +108,12 @@ def normalize_bed(input_path: str, output_path: str, report_path: str, feature_t
             rep.write("errors\t" + " | ".join(f"line {ln}: {msg}" for ln, msg in errors[:100]) + "\n")
 
     if errors:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
         raise SystemExit("BED normalization failed. See report for details.")
 
-    tmp_path = f"{output_path}.tmp"
-    with open(tmp_path, "w", encoding="utf-8") as out_fh:
-        for row in rows:
-            out_fh.write("\t".join(row) + "\n")
     os.replace(tmp_path, output_path)
 
 
